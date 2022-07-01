@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <allegro5/allegro5.h>
-#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
 
 void must_init(bool test, const char *description)
 {
@@ -15,13 +15,8 @@ int between(int lo, int hi)
     return lo + (rand() % (hi - lo));
 }
 
-float between_f(float lo, float hi)
-{
-    return lo + ((float)rand() / (float)RAND_MAX) * (hi - lo);
-}
-
-#define BUFFER_W 427
-#define BUFFER_H 240
+int BUFFER_W;
+int BUFFER_H;
 
 float DISP_SCALE_W;
 float DISP_SCALE_H;
@@ -146,7 +141,7 @@ int main()
 
     int redraw = true;
     must_init(al_init(), "Allegro");
-    must_init(al_init_primitives_addon(), "primitives");
+    must_init(al_init_image_addon(), "image");
     must_init(al_install_keyboard(), "keyboard");
     must_init(al_install_mouse(), "mouse");
 
@@ -155,6 +150,9 @@ int main()
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
     al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 16, ALLEGRO_SUGGEST);
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
+
+    BUFFER_W = 427;
+    BUFFER_H = 240;
 
     disp_init();
 
