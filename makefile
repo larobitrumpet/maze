@@ -1,8 +1,8 @@
-maze: maze.c
-	gcc maze.c -o maze $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
+main: main.c
+	gcc main.c -o main $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
 
 run:
-	./maze
+	./main
 
 clean:
-	rm maze
+	rm main
