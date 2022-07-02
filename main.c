@@ -11,11 +11,6 @@ void must_init(bool test, const char *description)
     printf("Couldn't initialize %s\n", description);
 }
 
-int between(int lo, int hi)
-{
-    return lo + (rand() % (hi - lo));
-}
-
 int BUFFER_W;
 int BUFFER_H;
 
@@ -133,6 +128,11 @@ void draw()
     // draw code
 
     disp_post_draw();
+}
+
+void update_maze_display()
+{
+    //TODO
 }
 
 int main()
