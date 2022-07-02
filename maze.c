@@ -105,11 +105,6 @@ static inline void maze_clear_pos_value(MAZE maze, int x, int y)
     clear_maze_bit(maze, x, y, 4);
 }
 
-void maze_set_special_value(MAZE maze, int x, int y)
-{
-    set_maze_bit(maze, x, y, 5);
-}
-
 void maze_set_pos(MAZE maze, int x, int y)
 {
     if (*(maze.pos_x) >= 0 && *(maze.pos_y) >= 0)
@@ -120,9 +115,24 @@ void maze_set_pos(MAZE maze, int x, int y)
     *(maze.pos_y) = y;
 }
 
+void maze_set_special_value(MAZE maze, int x, int y)
+{
+    set_maze_bit(maze, x, y, 5);
+}
+
 void maze_clear_special_value(MAZE maze, int x, int y)
 {
     clear_maze_bit(maze, x, y, 5);
+}
+
+void maze_set_visited(MAZE maze, int x, int y)
+{
+    set_maze_bit(maze, x, y, 6);
+}
+
+void maze_clear_visited(MAZE maze, int x, int y)
+{
+    clear_maze_bit(maze, x, y, 6);
 }
 
 unsigned char get_maze_passage_value(MAZE maze, int x, int y)
@@ -132,7 +142,7 @@ unsigned char get_maze_passage_value(MAZE maze, int x, int y)
 
 unsigned char get_maze_type_value(MAZE maze, int x, int y)
 {
-    unsigned char num = (get_maze_value(maze, x, y) & 240) >> 4; // 240 dec == 11110000 bin
+    unsigned char num = (get_maze_value(maze, x, y) & 48) >> 4; // 48 dec == 00110000 bin
     if (num % 2)
     {
         return clear_bit(num, 1);

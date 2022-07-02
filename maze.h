@@ -31,6 +31,8 @@ static inline void maze_clear_pose_value(MAZE maze, int x, int y);
 void maze_set_pos(MAZE maze, int x, int y);
 void maze_set_special_value(MAZE maze, int x, int y);
 void maze_clear_special_value(MAZE maze, int x, int y);
+void maze_set_visited(MAZE maze, int x, int y);
+void maze_clear_visited(MAZE maze, int x, int y);
 unsigned char get_maze_passage_value(MAZE maze, int x, int y);
 unsigned char get_maze_type_value(MAZE maze, int x, int y);
 
