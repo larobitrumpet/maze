@@ -7,6 +7,9 @@ main.o: main.c
 maze.o: maze.c
 	gcc -c maze.c -o maze.o
 
+stack.o: stack.c
+	gcc -c stack.c -o stack.o
+
 run:
 	./main
 
