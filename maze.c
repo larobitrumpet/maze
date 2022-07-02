@@ -135,6 +135,11 @@ void maze_clear_visited(MAZE maze, int x, int y)
     clear_maze_bit(maze, x, y, 6);
 }
 
+unsigned int maze_get_visited(MAZE maze, int x, int y)
+{
+    return get_maze_value(maze, x, y) & 64; // 64 dec == 01000000 bin
+}
+
 unsigned char get_maze_passage_value(MAZE maze, int x, int y)
 {
     return get_maze_value(maze, x, y) & 15; // 15 dec == 00001111 bin
