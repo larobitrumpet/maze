@@ -55,44 +55,58 @@ static inline void clear_maze_bit(MAZE maze, int x, int y, unsigned char bit)
     set_maze_value(maze, x, y, clear_bit(get_maze_value(maze, x, y), bit));
 }
 
-void maze_set_up_open(MAZE maze, int x, int y)
+static inline void maze_set_open(MAZE maze, int x, int y, enum Direction dir)
 {
-    set_maze_bit(maze, x, y, 0);
+    set_maze_bit(maze, x, y, dir);
 }
 
-void maze_set_up_close(MAZE maze, int x, int y)
+static inline void maze_set_close(MAZE maze, int x, int y, enum Direction dir)
 {
-    clear_maze_bit(maze, x, y, 0);
+    clear_maze_bit(maze, x, y, dir);
 }
 
-void maze_set_left_open(MAZE maze, int x, int y)
+void maze_carve_passage(MAZE maze, enum Direction dir)
 {
-    set_maze_bit(maze, x, y, 1);
+    maze_set_open(maze, *(maze.pos_x), *(maze.pos_y), dir);
+    switch (dir)
+    {
+        case up:
+            maze_set_open(maze, *(maze.pos_x), *(maze.pos_y) - 1, down);
+            break;
+        case left:
+            maze_set_open(maze, *(maze.pos_x) + 1, *(maze.pos_y), right);
+            break;
+        case down:
+            maze_set_open(maze, *(maze.pos_x), *(maze.pos_y) + 1, up);
+            break;
+        case right:
+            maze_set_open(maze, *(maze.pos_x) - 1, *(maze.pos_y), left);
+            break;
+        default:
+            break;
+    }
 }
 
-void maze_set_left_close(MAZE maze, int x, int y)
+void maze_fill_passage(MAZE maze, enum Direction dir)
 {
-    clear_maze_bit(maze, x, y, 1);
-}
-
-void maze_set_down_open(MAZE maze, int x, int y)
-{
-    set_maze_bit(maze, x, y, 2);
-}
-
-void maze_set_down_close(MAZE maze, int x, int y)
-{
-    clear_maze_bit(maze, x, y, 2);
-}
-
-void maze_set_right_open(MAZE maze, int x, int y)
-{
-    set_maze_bit(maze, x, y, 3);
-}
-
-void maze_set_right_close(MAZE maze, int x, int y)
-{
-    clear_maze_bit(maze, x, y, 3);
+    maze_set_close(maze, *(maze.pos_x), *(maze.pos_y), dir);
+    switch (dir)
+    {
+        case up:
+            maze_set_close(maze, *(maze.pos_x), *(maze.pos_y) - 1, down);
+            break;
+        case left:
+            maze_set_close(maze, *(maze.pos_x) + 1, *(maze.pos_y), right);
+            break;
+        case down:
+            maze_set_close(maze, *(maze.pos_x), *(maze.pos_y) + 1, up);
+            break;
+        case right:
+            maze_set_close(maze, *(maze.pos_x) - 1, *(maze.pos_y), left);
+            break;
+        default:
+            break;
+    }
 }
 
 static inline void maze_set_pos_value(MAZE maze, int x, int y)
@@ -135,7 +149,7 @@ void maze_clear_visited(MAZE maze, int x, int y)
     clear_maze_bit(maze, x, y, 6);
 }
 
-unsigned int maze_get_visited(MAZE maze, int x, int y)
+unsigned char maze_get_visited(MAZE maze, int x, int y)
 {
     return get_maze_value(maze, x, y) & 64; // 64 dec == 01000000 bin
 }
