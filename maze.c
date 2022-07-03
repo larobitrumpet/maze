@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "maze.h"
 
@@ -27,12 +28,12 @@ void deconstruct_maze(MAZE maze)
 
 static inline unsigned char get_maze_value(MAZE maze, int x, int y)
 {
-    return maze.values[y * maze.height + x];
+    return maze.values[y * maze.width + x];
 }
 
 static inline void set_maze_value(MAZE maze, int x, int y, unsigned char val)
 {
-    maze.values[y * maze.height + x] = val;
+    maze.values[y * maze.width + x] = val;
 }
 
 static inline unsigned char set_bit(unsigned char num, unsigned char bit)
@@ -73,14 +74,14 @@ void maze_carve_passage(MAZE maze, enum Direction dir)
         case up:
             maze_set_open(maze, *(maze.pos_x), *(maze.pos_y) - 1, down);
             break;
-        case left:
-            maze_set_open(maze, *(maze.pos_x) + 1, *(maze.pos_y), right);
+        case right:
+            maze_set_open(maze, *(maze.pos_x) + 1, *(maze.pos_y), left);
             break;
         case down:
             maze_set_open(maze, *(maze.pos_x), *(maze.pos_y) + 1, up);
             break;
-        case right:
-            maze_set_open(maze, *(maze.pos_x) - 1, *(maze.pos_y), left);
+        case left:
+            maze_set_open(maze, *(maze.pos_x) - 1, *(maze.pos_y), right);
             break;
         default:
             break;
@@ -95,14 +96,14 @@ void maze_fill_passage(MAZE maze, enum Direction dir)
         case up:
             maze_set_close(maze, *(maze.pos_x), *(maze.pos_y) - 1, down);
             break;
-        case left:
-            maze_set_close(maze, *(maze.pos_x) + 1, *(maze.pos_y), right);
+        case right:
+            maze_set_close(maze, *(maze.pos_x) + 1, *(maze.pos_y), left);
             break;
         case down:
             maze_set_close(maze, *(maze.pos_x), *(maze.pos_y) + 1, up);
             break;
-        case right:
-            maze_set_close(maze, *(maze.pos_x) - 1, *(maze.pos_y), left);
+        case left:
+            maze_set_close(maze, *(maze.pos_x) - 1, *(maze.pos_y), right);
             break;
         default:
             break;
@@ -169,5 +170,17 @@ unsigned char get_maze_type_value(MAZE maze, int x, int y)
     else
     {
         return num;
+    }
+}
+
+void print_maze(MAZE maze)
+{
+    for (int y = 0; y < maze.height; y++)
+    {
+        for (int x = 0; x < maze.width; x++)
+        {
+            printf("%0 2x ", get_maze_value(maze, x, y));
+        }
+        printf("\n");
     }
 }

@@ -1,7 +1,7 @@
 #ifndef MAZE_H
 #define MAZE_H
 
-enum Direction {up, left, down, right};
+enum Direction {up, right, down, left};
 
 typedef struct MAZE
 {
@@ -34,5 +34,6 @@ void maze_clear_visited(MAZE maze, int x, int y);
 unsigned char maze_get_visited(MAZE maze, int x, int y);
 unsigned char get_maze_passage_value(MAZE maze, int x, int y);
 unsigned char get_maze_type_value(MAZE maze, int x, int y);
+void print_maze(MAZE maze);
 
 #endif

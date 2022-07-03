@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include "maze.h"
@@ -192,11 +193,13 @@ void draw()
 
 void update_maze_display()
 {
+    //print_maze(maze);
     draw();
 }
 
 int main()
 {
+    srand((unsigned)time(NULL));
     ALLEGRO_TIMER *timer;
     ALLEGRO_EVENT_QUEUE *queue;
 
@@ -212,8 +215,11 @@ int main()
     al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 16, ALLEGRO_SUGGEST);
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
 
-    BUFFER_W = 427;
-    BUFFER_H = 240;
+    int maze_w = 60;
+    int maze_h = 30;
+
+    BUFFER_W = maze_w * TILE_W;
+    BUFFER_H = maze_h * TILE_H;
 
     disp_init();
 
@@ -232,6 +238,8 @@ int main()
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
     // setup_scene();
+    maze = construct_maze(maze_w, maze_h);
+    recursive_backtracking(maze);
 
     bool done = false;
     al_start_timer(timer);

@@ -26,7 +26,7 @@ void recursive_backtracking_carve_passage_from(MAZE maze, int x, int y)
     maze_set_special_value(maze, x, y);
     maze_set_visited(maze, x, y);
     update_maze_display();
-    enum Direction directions[4] = {up, left, down, right};
+    enum Direction directions[4] = {up, right, down, left};
     shuffle(directions, 4, sizeof(enum Direction));
 
     for (int i = 0; i < 4; i++)
@@ -41,9 +41,9 @@ void recursive_backtracking_carve_passage_from(MAZE maze, int x, int y)
                 if (new_y >= 0)
                     valid = 1;
                 break;
-            case left:
+            case right:
                 new_x += 1;
-                if (new_x >= 0)
+                if (new_x < maze.width)
                     valid = 1;
                 break;
             case down:
@@ -51,9 +51,9 @@ void recursive_backtracking_carve_passage_from(MAZE maze, int x, int y)
                 if (new_y < maze.height)
                     valid = 1;
                 break;
-            case right:
+            case left:
                 new_x -= 1;
-                if (new_x >= maze.width)
+                if (new_x >= 0)
                     valid = 1;
                 break;
             default:
@@ -63,6 +63,8 @@ void recursive_backtracking_carve_passage_from(MAZE maze, int x, int y)
         {
             maze_carve_passage(maze, directions[i]);
             recursive_backtracking_carve_passage_from(maze, new_x, new_y);
+            maze_set_pos(maze, x, y);
+            update_maze_display();
         }
     }
     maze_clear_special_value(maze, x, y);
