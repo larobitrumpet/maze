@@ -3,6 +3,7 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include "maze.h"
+#include "algorithms.h"
 
 void must_init(bool test, const char *description)
 {
@@ -121,18 +122,77 @@ void keyboard_update(ALLEGRO_EVENT* event)
     }
 }
 
+MAZE maze;
+
+#define TILE_W 8
+#define TILE_H 8
+
+typedef struct SPRITES
+{
+    ALLEGRO_BITMAP* _sheet;
+    ALLEGRO_BITMAP* tiles[3][16];
+} SPRITES;
+SPRITES sprites;
+
+ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
+{
+    ALLEGRO_BITMAP* sprite = al_create_sub_bitmap(sprites._sheet, x, y, w, h);
+    must_init(sprite, "sprite grab");
+    return sprite;
+}
+
+void sprites_init()
+{
+    sprites._sheet = al_load_bitmap("maze_tiles.png");
+    must_init(sprites._sheet, "maze tiles");
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 16; j++)
+        {
+            sprites.tiles[i][j] = sprite_grab(i * TILE_W, j * TILE_H, TILE_W, TILE_H);
+        }
+    }
+}
+
+void sprites_deinit()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 16; j++)
+        {
+            al_destroy_bitmap(sprites.tiles[i][j]);
+        }
+    }
+
+    al_destroy_bitmap(sprites._sheet);
+}
+
+void draw_maze()
+{
+    for (int y = 0; y < maze.height; y++)
+    {
+        for (int x = 0; x < maze.width; x++)
+        {
+            al_draw_bitmap(sprites.tiles[get_maze_type_value(maze, x, y)][get_maze_passage_value(maze, x, y)], x * TILE_W, y * TILE_H, 0);
+        }
+    }
+}
+
 void draw()
 {
     disp_pre_draw();
 
     // draw code
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+    draw_maze();
 
     disp_post_draw();
 }
 
 void update_maze_display()
 {
-    //TODO
+    draw();
 }
 
 int main()
@@ -156,6 +216,8 @@ int main()
     BUFFER_H = 240;
 
     disp_init();
+
+    sprites_init();
 
     keyboard_init();
 
@@ -216,6 +278,7 @@ int main()
     }
 
     // deinit
+    sprites_deinit();
     disp_deinit();
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
