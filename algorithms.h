@@ -4,6 +4,7 @@
 #include "stack.h"
 #include "random.h"
 #include "tree.h"
+#include "set.h"
 
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
