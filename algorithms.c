@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "maze.h"
 #include "stack.h"
+#include "random.h"
+#include "tree.h"
 #include "algorithms.h"
 
 static unsigned char in_list(int* list, int length, int item)
@@ -11,21 +13,6 @@ static unsigned char in_list(int* list, int length, int item)
             return 1;
     }
     return 0;
-}
-
-static inline int between(int lo, int hi)
-{
-    return lo + (rand() % (hi - lo));
-}
-
-int rand_comparison(const void* a, const void* b)
-{
-    return rand() % 2 ? +1 : -1;
-}
-
-void shuffle(void* base, size_t nitems, size_t size)
-{
-    qsort(base, nitems, size, rand_comparison);
 }
 
 void recursive_backtracking_carve_passage_from(MAZE maze, int x, int y)

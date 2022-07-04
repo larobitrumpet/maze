@@ -1,9 +1,3 @@
-typedef struct POINT
-{
-    int x;
-    int y;
-} POINT;
-
 typedef struct STACKNODE
 {
     POINT value;
