@@ -273,3 +273,114 @@ void kruskal(MAZE maze)
     }
     free(edges);
 }
+
+static void prim_add_neighbors_to_frontier(MAZE maze, SET* frontier)
+{
+    int x = *(maze.pos_x);
+    int y = *(maze.pos_y);
+    enum Direction dirs[4] = {up, right, down, left};
+    for (int i = 0; i < 4; i++)
+    {
+        int new_x = x;
+        int new_y = y;
+        unsigned char valid = 0;
+        switch (dirs[i])
+        {
+            case up:
+                new_y -= 1;
+                if (new_y >= 0)
+                    valid = 1;
+                break;
+            case right:
+                new_x += 1;
+                if (new_x < maze.width)
+                    valid = 1;
+                break;
+            case down:
+                new_y += 1;
+                if (new_y < maze.height)
+                    valid = 1;
+                break;
+            case left:
+                new_x -= 1;
+                if (new_x >= 0)
+                    valid = 1;
+                break;
+            default:
+                break;
+        }
+        if (valid && !(maze_get_visited(maze, new_x, new_y)))
+        {
+            POINT p;
+            p.x = new_x;
+            p.y = new_y;
+            set_add(frontier, p);
+            maze_set_special_value(maze, new_x, new_y);
+        }
+    }
+}
+
+static void prim_join_from_frontier(MAZE maze)
+{
+    int x = *(maze.pos_x);
+    int y = *(maze.pos_y);
+    maze_set_visited(maze, x, y);
+    maze_clear_special_value(maze, x, y);
+    enum Direction directions[4] = {up, right, down, left};
+    shuffle(directions, 4, sizeof(enum Direction));
+
+    for (int i = 0; i < 4; i++)
+    {
+        int new_x = x;
+        int new_y = y;
+        unsigned char valid = 0;
+        switch (directions[i])
+        {
+            case up:
+                new_y -= 1;
+                if (new_y >= 0)
+                    valid = 1;
+                break;
+            case right:
+                new_x += 1;
+                if (new_x < maze.width)
+                    valid = 1;
+                break;
+            case down:
+                new_y += 1;
+                if (new_y < maze.height)
+                    valid = 1;
+                break;
+            case left:
+                new_x -= 1;
+                if (new_x >= 0)
+                    valid = 1;
+                break;
+            default:
+                break;
+        }
+        if (valid && maze_get_visited(maze, new_x, new_y))
+        {
+            maze_carve_passage(maze, directions[i]);
+            break;
+        }
+    }
+}
+
+void prim(MAZE maze)
+{
+    SET* frontier = construct_set();
+    maze_set_pos(maze, 0, 0);
+    maze_set_visited(maze, 0, 0);
+    prim_add_neighbors_to_frontier(maze, frontier);
+    update_maze_display();
+    while (!(set_is_empty(frontier)))
+    {
+        POINT p = set_pop_random(frontier);
+        maze_set_pos(maze, p.x, p.y);
+        prim_join_from_frontier(maze);
+        prim_add_neighbors_to_frontier(maze, frontier);
+        update_maze_display();
+    }
+    deconstruct_set(frontier);
+}

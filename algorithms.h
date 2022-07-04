@@ -30,5 +30,8 @@ static void eller_last_row(MAZE maze, int* row);
 void eller(MAZE maze);
 static inline TREE* kruskal_get_set(TREE** sets, int x, int y, int maze_w);
 void kruskal(MAZE maze);
+static void prim_add_neighbors_to_frontier(MAZE maze, SET* frontier);
+static void prim_join_from_frontier(MAZE maze);
+void prim(MAZE maze);
 
 #endif
