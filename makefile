@@ -1,5 +1,5 @@
-main: main.o maze.o algorithms.o stack.o random.o tree.o set.o
-	gcc main.o maze.o algorithms.o stack.o random.o tree.o set.o -o main $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
+main: main.o maze.o algorithms.o stack.o random.o tree.o set.o point.o
+	gcc main.o maze.o algorithms.o stack.o random.o tree.o set.o point.o -o main $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
 
 main.o: main.c maze.h algorithms.h
 	gcc -c main.c -o main.o
@@ -19,16 +19,19 @@ tree.o: tree.c random.h point.h
 random.o: random.c
 	gcc -c random.c -o random.o
 
-set.o: set.c
+set.o: set.c point.h
 	gcc -c set.c -o set.o
+
+point.o: point.c
+	gcc -c point.c -o point.o
 
 run: main
 	./main
 
 debug: main_debug
 
-main_debug: main_debug.o maze_debug.o algorithms_debug.o stack_debug.o random_debug.o tree_debug.o set_debug.o
-	gcc -g main_debug.o maze_debug.o algorithms_debug.o stack_debug.o random_debug.o tree_debug.o set_debug.o -o main_debug $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
+main_debug: main_debug.o maze_debug.o algorithms_debug.o stack_debug.o random_debug.o tree_debug.o set_debug.o point_debug.o
+	gcc -g main_debug.o maze_debug.o algorithms_debug.o stack_debug.o random_debug.o tree_debug.o set_debug.o point_debug.o -o main_debug $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
 
 main_debug.o: main.c maze.h algorithms.h
 	gcc -g -c main.c -o main_debug.o
@@ -48,8 +51,11 @@ tree_debug.o: tree.c random.h point.h
 random_debug.o: random.c
 	gcc -g -c random.c -o random_debug.o
 
-set_debug.o: set.c
+set_debug.o: set.c point.h
 	gcc -g -c set.c -o set_debug.o
+
+point_debug.o: point.c
+	gcc -g -c point.c -o point_debug.o
 
 run_debug: main_debug
 	gdb ./main_debug

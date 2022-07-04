@@ -7,4 +7,6 @@ typedef struct POINT
     int y;
 } POINT;
 
+unsigned char points_are_equal(POINT p1, POINT p2);
+
 #endif

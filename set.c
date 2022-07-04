@@ -19,7 +19,7 @@ unsigned char in_set(SET* set, POINT item)
 {
     for (int i = 0; i < set->length; i++)
     {
-        if (set->points[i] == item)
+        if (points_are_equal(set->points[i], item))
             return 1;
     }
     return 0;
