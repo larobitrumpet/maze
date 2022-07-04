@@ -242,7 +242,8 @@ int main()
     // setup_scene();
     maze = construct_maze(maze_w, maze_h);
     //recursive_backtracking(maze);
-    eller(maze);
+    //eller(maze);
+    kruskal(maze);
 
     bool done = false;
     al_start_timer(timer);

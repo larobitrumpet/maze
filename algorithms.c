@@ -179,3 +179,97 @@ void eller(MAZE maze)
     eller_last_row(maze, row);
     free(row);
 }
+
+static inline TREE* kruskal_get_set(TREE** sets, int x, int y, int maze_w)
+{
+    return sets[y * maze_w + x];
+}
+
+void kruskal(MAZE maze)
+{
+    TREE** sets = (TREE**)malloc(sizeof(TREE*) * maze.width * maze.height);
+    for (int y = 0; y < maze.height; y++)
+    {
+        for (int x = 0; x < maze.width; x++)
+        {
+            POINT p;
+            p.x = x;
+            p.y = y;
+            sets[y * maze.width + x] = construct_TREE(p);
+        }
+    }
+
+    int num_edges = maze.width * maze.height * 2 - maze.width - maze.height;
+    EDGE** edges = (EDGE**)malloc(sizeof(EDGE*) * num_edges);
+    enum Direction dirs[2] = {right, down};
+    int i;
+    for (int y = 0; y < maze.height - 1; y++)
+    {
+        for (int x = 0; x < maze.width - 1; x++)
+        {
+            for (int d = 0; d < 2; d++)
+            {
+                EDGE* ed = (EDGE*)malloc(sizeof(EDGE));
+                ed->x = x;
+                ed->y = y;
+                ed->dir = dirs[d];
+                edges[i] = ed;
+                i++;
+            }
+        }
+        int x = maze.width - 1;
+        EDGE* ed = (EDGE*)malloc(sizeof(EDGE));
+        ed->x = x;
+        ed->y = y;
+        ed->dir = down;
+        edges[i] = ed;
+        i++;
+    }
+    {
+    int y = maze.height - 1;
+    for (int x = 0; x < maze.width - 1; x++)
+    {
+        EDGE* ed = (EDGE*)malloc(sizeof(EDGE));
+        ed->x = x;
+        ed->y = y;
+        ed->dir = right;
+        edges[i] = ed;
+        i++;
+    }
+    }
+
+    shuffle(edges, num_edges, sizeof(EDGE*));
+
+    maze_set_pos(maze, 0, 0);
+    update_maze_display();
+    for (int i = 0; i < num_edges; i++)
+    {
+        int x1 = edges[i]->x;
+        int y1 = edges[i]->y;
+        int x2;
+        int y2;
+        switch (edges[i]->dir)
+        {
+            case right:
+                x2 = x1 + 1;
+                y2 = y1;
+                break;
+            case down:
+                x2 = x1;
+                y2 = y1 + 1;
+                break;
+            default:
+                printf("Something has gone wrong: %p: %d\n", edges[i], edges[i]->dir);
+                break;
+        }
+        maze_set_pos(maze, x1, y1);
+        if (!(in_same_tree(kruskal_get_set(sets, x1, y1, maze.width), kruskal_get_set(sets, x2, y2, maze.width))))
+        {
+            tree_union(kruskal_get_set(sets, x1, y1, maze.width), kruskal_get_set(sets, x2, y2, maze.width));
+            maze_carve_passage(maze, edges[i]->dir);
+        }
+        update_maze_display();
+        free(edges[i]);
+    }
+    free(edges);
+}

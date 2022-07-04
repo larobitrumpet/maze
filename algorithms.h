@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "point.h"
 #include "maze.h"
 #include "stack.h"
 #include "random.h"
@@ -26,5 +27,7 @@ static void eller_join_down(MAZE maze, int* row, int* next_row);
 static int* eller_row(MAZE maze, int* row, int* next_row);
 static void eller_last_row(MAZE maze, int* row);
 void eller(MAZE maze);
+static inline TREE* kruskal_get_set(TREE** sets, int x, int y, int maze_w);
+void kruskal(MAZE maze);
 
 #endif
