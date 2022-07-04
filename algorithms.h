@@ -1,6 +1,14 @@
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
 
+// structure to hold edges used in kruskal's algorithm
+typedef struct EDGE
+{
+    int x;
+    int y;
+    Direction dir;
+} EDGE;
+
 void update_maze_display();
 static unsigned char in_list(int* list, int length, int item);
 static inline int between(int lo, int hi);
