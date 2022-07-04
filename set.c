@@ -30,15 +30,15 @@ unsigned char set_is_empty(SET* set)
     return set->length == 0;
 }
 
-static void set_increase_size(SET* set);
+static void set_increase_size(SET* set)
 {
     set->size = (int)(set->size * SET_SIZE_INCREASE);
-    set->points = (POINT*)realloc(sizeof(POINT) * set->size);
+    set->points = (POINT*)realloc(set->points, sizeof(POINT) * set->size);
 }
 
 void set_add(SET* set, POINT p)
 {
-    if (!(in_set(set, point)))
+    if (!(in_set(set, p)))
     {
         if (set->length == set->size)
             set_increase_size(set);
@@ -52,8 +52,8 @@ POINT set_pop_random(SET* set)
     if (set_is_empty(set))
     {
         POINT p;
-        p->x = -1;
-        p->y = -1;
+        p.x = -1;
+        p.y = -1;
         return p;
     }
     shuffle(set->points, set->length, sizeof(POINT));
