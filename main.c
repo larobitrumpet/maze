@@ -217,6 +217,8 @@ int main()
 
     int maze_w = 60;
     int maze_h = 30;
+    //int maze_w = 8;
+    //int maze_h = 8;
 
     BUFFER_W = maze_w * TILE_W;
     BUFFER_H = maze_h * TILE_H;
@@ -239,7 +241,8 @@ int main()
 
     // setup_scene();
     maze = construct_maze(maze_w, maze_h);
-    recursive_backtracking(maze);
+    //recursive_backtracking(maze);
+    eller(maze);
 
     bool done = false;
     al_start_timer(timer);
