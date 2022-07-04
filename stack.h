@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include "point.h"
+
+#ifndef STACK_H
+#define STACK_H
+
 typedef struct STACKNODE
 {
     POINT value;
@@ -17,3 +23,5 @@ STACK* stack_push(STACK* stack, POINT value);
 POINT stack_pop(STACK* stack);
 POINT stack_peak(STACK* stack);
 unsigned char stack_is_empty(STACK* stack);
+
+#endif

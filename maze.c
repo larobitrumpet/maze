@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "maze.h"
 
 MAZE construct_maze(int width, int height)

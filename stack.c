@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include "point.h"
 #include "stack.h"
 
 static STACKNODE* construct_stacknode()

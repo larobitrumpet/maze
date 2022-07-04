@@ -1,5 +1,3 @@
-#include "point.h"
-#include "random.h"
 #include "tree.h"
 
 TREE* construct_TREE(POINT value)
@@ -30,25 +28,25 @@ TREE* get_root(TREE* tree)
 
 void tree_insert(TREE* tree_root1, TREE* tree_root2)
 {
-    TREE* node = tree1;
+    TREE* node = tree_root1;
     while (1)
     {
         if (node->left_child == NULL)
         {
-            node->left_child = tree2;
-            tree2->parent = node;
+            node->left_child = tree_root2;
+            tree_root2->parent = node;
             return;
         }
         if (node->right_child == NULL)
         {
-            node->right_child = tree2;
-            tree2->parent = node;
+            node->right_child = tree_root2;
+            tree_root2->parent = node;
             return;
         }
         if (between(0, 2))
-            node = tree->right_child;
+            node = node->right_child;
         else
-            node = tree->left_child;
+            node = node->left_child;
     }
 }
 

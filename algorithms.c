@@ -1,8 +1,3 @@
-#include <stdlib.h>
-#include "maze.h"
-#include "stack.h"
-#include "random.h"
-#include "tree.h"
 #include "algorithms.h"
 
 static unsigned char in_list(int* list, int length, int item)

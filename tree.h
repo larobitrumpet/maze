@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include "point.h"
+#include "random.h"
+
 #ifndef TREE_H
 #define TREE_H
 

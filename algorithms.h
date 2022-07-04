@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include "maze.h"
+#include "stack.h"
+#include "random.h"
+#include "tree.h"
+
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
 
@@ -6,7 +12,7 @@ typedef struct EDGE
 {
     int x;
     int y;
-    Direction dir;
+    enum Direction dir;
 } EDGE;
 
 void update_maze_display();
