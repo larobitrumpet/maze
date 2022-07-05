@@ -387,9 +387,9 @@ void prim(MAZE maze)
 
 static enum Orientation recursive_division_pick_orientation(int width, int height)
 {
-    if (width > height)
+    if (width > height + 1)
         return verticle;
-    else if (height > width)
+    else if (height > width + 1)
         return horizontal;
     else if (between(0, 2))
         return verticle;
