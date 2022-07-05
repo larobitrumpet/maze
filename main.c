@@ -28,7 +28,7 @@ ALLEGRO_BITMAP *buffer;
 
 void disp_init()
 {
-    al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW + ALLEGRO_RESIZABLE);
+    //al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW + ALLEGRO_RESIZABLE);
     al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
     al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 16, ALLEGRO_SUGGEST);
@@ -244,7 +244,8 @@ int main()
     //recursive_backtracking(maze);
     //eller(maze);
     //kruskal(maze);
-    prim(maze);
+    //prim(maze);
+    recursive_division(maze);
 
     bool done = false;
     al_start_timer(timer);

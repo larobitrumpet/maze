@@ -9,6 +9,9 @@
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
 
+// orientation enum used in recursive division
+enum Orientation{horizontal, verticle};
+
 // structure to hold edges used in kruskal's algorithm
 typedef struct EDGE
 {
@@ -33,5 +36,8 @@ void kruskal(MAZE maze);
 static void prim_add_neighbors_to_frontier(MAZE maze, SET* frontier);
 static void prim_join_from_frontier(MAZE maze);
 void prim(MAZE maze);
+static enum Orientation recursive_division_pick_orientation(int width, int height);
+static void recursive_division_recurse(MAZE maze, int x, int y, int width, int height);
+void recursive_division(MAZE maze);
 
 #endif

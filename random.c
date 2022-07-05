@@ -2,6 +2,8 @@
 
 int between(int lo, int hi)
 {
+    if (lo == hi)
+        return lo;
     return lo + (rand() % (hi - lo));
 }
 
