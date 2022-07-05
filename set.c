@@ -7,6 +7,7 @@ SET* construct_set()
     set->points = points;
     set->length = 0;
     set->size = SET_INIT_SIZE;
+    return set;
 }
 
 void deconstruct_set(SET* set)
