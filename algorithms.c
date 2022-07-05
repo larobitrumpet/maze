@@ -462,3 +462,60 @@ void recursive_division(MAZE maze)
     update_maze_display();
     recursive_division_recurse(maze, 0, 0, maze.width, maze.height);
 }
+
+void aldous_broder(MAZE maze)
+{
+    int remaining = maze.width * maze.height;
+    maze_set_pos(maze, 0, 0);
+    maze_set_visited(maze, 0, 0);
+    remaining--;
+    while (remaining)
+    {
+        enum Direction directions[4] = {up, right, down, left};
+        shuffle(directions, 4, sizeof(enum Direction));
+
+        for (int i = 0; i < 4; i++)
+        {
+            int new_x = *(maze.pos_x);
+            int new_y = *(maze.pos_y);
+            unsigned char valid = 0;
+            switch (directions[i])
+            {
+                case up:
+                    new_y -= 1;
+                    if (new_y >= 0)
+                        valid = 1;
+                    break;
+                case right:
+                    new_x += 1;
+                    if (new_x < maze.width)
+                        valid = 1;
+                    break;
+                case down:
+                    new_y += 1;
+                    if (new_y < maze.height)
+                        valid = 1;
+                    break;
+                case left:
+                    new_x -= 1;
+                    if (new_x >= 0)
+                        valid = 1;
+                    break;
+                default:
+                    break;
+            }
+            if (valid)
+            {
+                if (!(maze_get_visited(maze, new_x, new_y)))
+                {
+                    maze_carve_passage(maze, directions[i]);
+                    maze_set_visited(maze, new_x, new_y);
+                    remaining--;
+                }
+                maze_set_pos(maze, new_x, new_y);
+                update_maze_display();
+                break;
+            }
+        }
+    }
+}

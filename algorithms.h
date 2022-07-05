@@ -39,5 +39,6 @@ void prim(MAZE maze);
 static enum Orientation recursive_division_pick_orientation(int width, int height);
 static void recursive_division_recurse(MAZE maze, int x, int y, int width, int height);
 void recursive_division(MAZE maze);
+void aldous_broder(MAZE maze);
 
 #endif

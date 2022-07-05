@@ -215,8 +215,10 @@ int main()
     al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 16, ALLEGRO_SUGGEST);
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
 
-    int maze_w = 60;
-    int maze_h = 30;
+    //int maze_w = 60;
+    //int maze_h = 30;
+    int maze_w = 16;
+    int maze_h = 16;
     //int maze_w = 8;
     //int maze_h = 8;
 
@@ -245,7 +247,8 @@ int main()
     //eller(maze);
     //kruskal(maze);
     //prim(maze);
-    recursive_division(maze);
+    //recursive_division(maze);
+    aldous_broder(maze);
 
     bool done = false;
     al_start_timer(timer);
