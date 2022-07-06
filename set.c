@@ -61,3 +61,22 @@ POINT set_pop_random(SET* set)
     set->length--;
     return set->points[set->length];
 }
+
+void set_remove(SET* set, POINT p)
+{
+    int index = -1;
+    for (int i = 0; i < set->length; i++)
+    {
+        if (points_are_equal(set->points[i], p))
+        {
+            index = i;
+            break;
+        }
+    }
+    if (index >= 0)
+    {
+        for (int i = index; i < set->length - 1; i++)
+            set->points[i] = set->points[i + 1];
+        set->length--;
+    }
+}

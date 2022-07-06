@@ -21,5 +21,6 @@ unsigned char set_is_empty(SET* set);
 static void set_increase_size(SET* set);
 void set_add(SET* set, POINT p);
 POINT set_pop_random(SET* set);
+void set_remove(SET* set, POINT p);
 
 #endif
