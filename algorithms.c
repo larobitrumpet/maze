@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "algorithms.h"
 
 static unsigned char in_list(int* list, int length, int item)
@@ -517,5 +518,97 @@ void aldous_broder(MAZE maze)
                 break;
             }
         }
+    }
+}
+
+static WILLSON_PATH* willson_get_willson_path(MAZE maze, SET* not_in_maze, POINT start)
+{
+    WILLSON_PATH* path = construct_willson_path();
+    POINT current = start;
+    while (in_set(not_in_maze, current))
+    {
+        int new_x;
+        int new_y;
+        int i = 0;
+        enum Direction directions[4] = {up, right, down, left};
+        shuffle(directions, 4, sizeof(enum Direction));
+
+        for (i = 0; i < 4; i++)
+        {
+            unsigned char valid = 0;
+            new_x = current.x;
+            new_y = current.y;
+            switch (directions[i])
+            {
+                case up:
+                    new_y -= 1;
+                    if (new_y >= 0)
+                        valid = 1;
+                    break;
+                case right:
+                    new_x += 1;
+                    if (new_x < maze.width)
+                        valid = 1;
+                    break;
+                case down:
+                    new_y += 1;
+                    if (new_y < maze.height)
+                        valid = 1;
+                    break;
+                case left:
+                    new_x -= 1;
+                    if (new_x >= 0)
+                        valid = 1;
+                    break;
+                default:
+                    break;
+            }
+            if (valid)
+                break;
+        }
+        willson_path_add(maze, path, current, directions[i]);
+        current.x = new_x;
+        current.y = new_y;
+        maze_set_pos(maze, current.x, current.y);
+        update_maze_display();
+    }
+    return path;
+}
+
+static void willson_follow_willson_path(MAZE maze, SET* not_in_maze, WILLSON_PATH* path)
+{
+    for (int i = 0; i < path->length; i++)
+    {
+        maze_set_pos(maze, path->points[i].x, path->points[i].y);
+        maze_carve_passage(maze, path->dirs[i]);
+        maze_clear_special_value(maze, path->points[i].x, path->points[i].y);
+        set_remove(not_in_maze, path->points[i]);
+        update_maze_display();
+    }
+}
+
+void willson(MAZE maze)
+{
+    SET* not_in_maze = construct_set();
+    for (int y = 0; y < maze.height; y++)
+    {
+        for (int x = 0; x < maze.width; x++)
+        {
+            POINT p;
+            p.x = x;
+            p.y = y;
+            set_add(not_in_maze, p);
+        }
+    }
+    {
+        POINT init = set_pop_random(not_in_maze);
+        maze_set_pos(maze, init.x, init.y);
+        update_maze_display();
+    }
+    while (!(set_is_empty(not_in_maze)))
+    {
+        POINT start = set_peak_random(not_in_maze);
+        WILLSON_PATH* path = willson_get_willson_path(maze, not_in_maze, start);
+        willson_follow_willson_path(maze, not_in_maze, path);
     }
 }

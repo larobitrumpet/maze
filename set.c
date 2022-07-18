@@ -62,6 +62,19 @@ POINT set_pop_random(SET* set)
     return set->points[set->length];
 }
 
+POINT set_peak_random(SET* set)
+{
+    if (set_is_empty(set))
+    {
+        POINT p;
+        p.x = -1;
+        p.y = -1;
+        return p;
+    }
+    shuffle(set->points, set->length, sizeof(POINT));
+    return set->points[set->length - 1];
+}
+
 void set_remove(SET* set, POINT p)
 {
     int index = -1;

@@ -5,6 +5,7 @@
 #include "random.h"
 #include "tree.h"
 #include "set.h"
+#include "willson_path.h"
 
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
@@ -40,5 +41,8 @@ static enum Orientation recursive_division_pick_orientation(int width, int heigh
 static void recursive_division_recurse(MAZE maze, int x, int y, int width, int height);
 void recursive_division(MAZE maze);
 void aldous_broder(MAZE maze);
+static WILLSON_PATH* willson_get_willson_path(MAZE maze, SET* not_in_maze, POINT start);
+static void willson_follow_willson_path(MAZE maze, SET* not_in_maze, WILLSON_PATH* path);
+void willson(MAZE maze);
 
 #endif

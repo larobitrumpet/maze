@@ -30,15 +30,19 @@ int willson_path_get_index(WILLSON_PATH* path, POINT p)
 static void willson_path_increase_size(WILLSON_PATH* path)
 {
     path->size = (int)(path->size * WILLSON_PATH_SIZE_INCREASE);
-    path->points = (POINT*)realloc(path->points, sizeof(enum Direction) * path->size);
+    path->points = (POINT*)realloc(path->points, sizeof(POINT) * path->size);
     path->dirs = (enum Direction*)realloc(path->dirs, sizeof(enum Direction) * path->size);
 }
 
-void willson_path_add(WILLSON_PATH* path, POINT p, enum Direction dir)
+void willson_path_add(MAZE maze, WILLSON_PATH* path, POINT p, enum Direction dir)
 {
     int index = willson_path_get_index(path, p);
     if (index >= 0)
     {
+        for (int i = index + 1; i < path->length; i++)
+        {
+            maze_clear_special_value(maze, path->points[i].x, path->points[i].y);
+        }
         path->dirs[index] = dir;
         path->length = index + 1;
     }
@@ -48,5 +52,7 @@ void willson_path_add(WILLSON_PATH* path, POINT p, enum Direction dir)
             willson_path_increase_size(path);
         path->points[path->length] = p;
         path->dirs[path->length] = dir;
+        path->length++;
+        maze_set_special_value(maze, p.x, p.y);
     }
 }
