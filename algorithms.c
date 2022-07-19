@@ -612,3 +612,149 @@ void willson(MAZE maze)
         willson_follow_willson_path(maze, not_in_maze, path);
     }
 }
+
+static void hunt_and_kill_walk(MAZE maze, int x, int y)
+{
+    maze_set_pos(maze, x, y);
+    maze_set_visited(maze, x, y);
+    update_maze_display();
+    while (1)
+    {
+        enum Direction directions[4] = {up, right, down, left};
+        shuffle(directions, 4, sizeof(enum Direction));
+
+        unsigned char dead_end = 1;
+        for (int i = 0; i < 4; i++)
+        {
+            int new_x = x;
+            int new_y = y;
+            unsigned char valid = 0;
+            switch (directions[i])
+            {
+                case up:
+                    new_y -= 1;
+                    if (new_y >= 0)
+                        valid = 1;
+                    break;
+                case right:
+                    new_x += 1;
+                    if (new_x < maze.width)
+                        valid = 1;
+                    break;
+                case down:
+                    new_y += 1;
+                    if (new_y < maze.height)
+                        valid = 1;
+                    break;
+                case left:
+                    new_x -= 1;
+                    if (new_x >= 0)
+                        valid = 1;
+                    break;
+                default:
+                    break;
+            }
+            if (valid && !(maze_get_visited(maze, new_x, new_y)))
+            {
+                dead_end = 0;
+                maze_carve_passage(maze, directions[i]);
+                x = new_x;
+                y = new_y;
+                maze_set_pos(maze, x, y);
+                maze_set_visited(maze, x, y);
+                update_maze_display();
+                break;
+            }
+        }
+        if (dead_end)
+            break;
+    }
+}
+
+static unsigned char hunt_and_kill_unvisited_with_visited_neighbors(MAZE maze, int x, int y)
+{
+    if (maze_get_visited(maze, x, y))
+        return 0;
+    
+    enum Direction directions[4] = {up, right, down, left};
+    shuffle(directions, 4, sizeof(enum Direction));
+
+    for (int i = 0; i < 4; i++)
+    {
+        int new_x = x;
+        int new_y = y;
+        unsigned char valid = 0;
+        switch (directions[i])
+        {
+            case up:
+                new_y -= 1;
+                if (new_y >= 0)
+                    valid = 1;
+                break;
+            case right:
+                new_x += 1;
+                if (new_x < maze.width)
+                    valid = 1;
+                break;
+            case down:
+                new_y += 1;
+                if (new_y < maze.height)
+                    valid = 1;
+                break;
+            case left:
+                new_x -= 1;
+                if (new_x >= 0)
+                    valid = 1;
+                break;
+            default:
+                break;
+        }
+        if (valid && maze_get_visited(maze, new_x, new_y))
+        {
+            maze_set_pos(maze, x, y);
+            maze_set_visited(maze, x, y);
+            maze_carve_passage(maze, directions[i]);
+            update_maze_display();
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static POINT hunt_and_kill_hunt(MAZE maze, int start_y)
+{
+    POINT p;
+    p.x = -1;
+    p.y = -1;
+    for (int y = start_y; y < maze.height; y++)
+    {
+        for (int x = 0; x < maze.width; x++)
+        {
+            maze_set_pos(maze, x, y);
+            update_maze_display();
+            if (hunt_and_kill_unvisited_with_visited_neighbors(maze, x, y))
+            {
+                p.x = x;
+                p.y = y;
+                return p;
+            }
+        }
+    }
+    return p;
+}
+
+void hunt_and_kill(MAZE maze)
+{
+    int x = 0;
+    int y = 0;
+    while (1)
+    {
+        hunt_and_kill_walk(maze, x, y);
+        POINT p = hunt_and_kill_hunt(maze, y);
+        if (p.x == -1 || p.y == -1)
+            return;
+        x = p.x;
+        y = p.y;
+    }
+}

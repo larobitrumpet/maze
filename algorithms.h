@@ -44,5 +44,9 @@ void aldous_broder(MAZE maze);
 static WILLSON_PATH* willson_get_willson_path(MAZE maze, SET* not_in_maze, POINT start);
 static void willson_follow_willson_path(MAZE maze, SET* not_in_maze, WILLSON_PATH* path);
 void willson(MAZE maze);
+static void hunt_and_kill_walk(MAZE maze, int x, int y);
+static unsigned char hunt_and_kill_unvisited_with_visited_neighbors(MAZE maze, int x, int y);
+static POINT hunt_and_kill_hunt(MAZE maze, int start_y);
+void hunt_and_kill(MAZE maze);
 
 #endif

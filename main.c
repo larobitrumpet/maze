@@ -249,7 +249,8 @@ int main()
     //prim(maze);
     //recursive_division(maze);
     //aldous_broder(maze);
-    willson(maze);
+    //willson(maze);
+    hunt_and_kill(maze);
 
     bool done = false;
     al_start_timer(timer);
