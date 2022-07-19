@@ -5,6 +5,7 @@
 #include <allegro5/allegro_image.h>
 #include "maze.h"
 #include "algorithms.h"
+#include "user_input.h"
 
 void must_init(bool test, const char *description)
 {
@@ -215,12 +216,11 @@ int main()
     al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 16, ALLEGRO_SUGGEST);
     al_set_new_display_flags(ALLEGRO_RESIZABLE);
 
-    int maze_w = 60;
-    int maze_h = 30;
-    //int maze_w = 16;
-    //int maze_h = 16;
-    //int maze_w = 8;
-    //int maze_h = 8;
+    int maze_w;
+    int maze_h;
+    user_get_maze_dimentions(&maze_w, &maze_h);
+    int algorithm;
+    user_get_algorithm(&algorithm);
 
     BUFFER_W = maze_w * TILE_W;
     BUFFER_H = maze_h * TILE_H;
@@ -243,14 +243,35 @@ int main()
 
     // setup_scene();
     maze = construct_maze(maze_w, maze_h);
-    //recursive_backtracking(maze);
-    //eller(maze);
-    //kruskal(maze);
-    //prim(maze);
-    //recursive_division(maze);
-    //aldous_broder(maze);
-    //willson(maze);
-    hunt_and_kill(maze);
+    switch (algorithm)
+    {
+        case 0:
+            recursive_backtracking(maze);
+            break;
+        case 1:
+            eller(maze);
+            break;
+        case 2:
+            kruskal(maze);
+            break;
+        case 3:
+            prim(maze);
+            break;
+        case 4:
+            recursive_division(maze);
+            break;
+        case 5:
+            aldous_broder(maze);
+            break;
+        case 6:
+            willson(maze);
+            break;
+        case 7:
+            hunt_and_kill(maze);
+            break;
+        default:
+            break;
+    }
 
     bool done = false;
     al_start_timer(timer);
