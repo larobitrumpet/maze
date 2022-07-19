@@ -19,3 +19,7 @@ To build on other platforms, [this](https://github.com/liballeg/allegro_wiki/wik
 ## Run
 
 If you have `make`, you can run `make run`. You can also run the binary executable `./main` or `./main.exe` on Windows.
+
+## License
+
+This application is licensed under the [MIT License](LICENSE)
