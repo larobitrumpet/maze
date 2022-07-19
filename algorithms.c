@@ -272,7 +272,10 @@ void kruskal(MAZE maze)
         update_maze_display();
         free(edges[i]);
     }
+
     free(edges);
+    deconstruct_TREE(get_root(sets[0]));
+    free(sets);
 }
 
 static void prim_add_neighbors_to_frontier(MAZE maze, SET* frontier)
@@ -610,7 +613,9 @@ void willson(MAZE maze)
         POINT start = set_peak_random(not_in_maze);
         WILLSON_PATH* path = willson_get_willson_path(maze, not_in_maze, start);
         willson_follow_willson_path(maze, not_in_maze, path);
+        deconstruct_willson_path(path);
     }
+    deconstruct_set(not_in_maze);
 }
 
 static void hunt_and_kill_walk(MAZE maze, int x, int y)

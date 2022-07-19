@@ -318,6 +318,7 @@ int main()
     }
 
     // deinit
+    deconstruct_maze(maze);
     sprites_deinit();
     disp_deinit();
     al_destroy_timer(timer);
