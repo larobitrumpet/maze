@@ -722,12 +722,23 @@ static unsigned char hunt_and_kill_unvisited_with_visited_neighbors(MAZE maze, i
     return 0;
 }
 
-static POINT hunt_and_kill_hunt(MAZE maze, int start_y)
+static POINT hunt_and_kill_hunt(MAZE maze, int start_x, int start_y)
 {
     POINT p;
     p.x = -1;
     p.y = -1;
-    for (int y = start_y; y < maze.height; y++)
+    for (int x = start_x; x < maze.width; x++)
+    {
+        maze_set_pos(maze, x, start_y);
+        update_maze_display();
+        if (hunt_and_kill_unvisited_with_visited_neighbors(maze, x, start_y))
+        {
+            p.x = x;
+            p.y = start_y;
+            return p;
+        }
+    }
+    for (int y = start_y + 1; y < maze.height; y++)
     {
         for (int x = 0; x < maze.width; x++)
         {
@@ -751,7 +762,7 @@ void hunt_and_kill(MAZE maze)
     while (1)
     {
         hunt_and_kill_walk(maze, x, y);
-        POINT p = hunt_and_kill_hunt(maze, y);
+        POINT p = hunt_and_kill_hunt(maze, x + 1, y);
         if (p.x == -1 || p.y == -1)
             return;
         x = p.x;
