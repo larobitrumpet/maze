@@ -18,7 +18,7 @@ typedef struct MAZE
     SET* update;
 } MAZE;
 
-MAZE construct_maze(int width, int height);
+MAZE construct_maze(int width, int height, unsigned char wall_adder);
 void deconstruct_maze(MAZE maze);
 static inline unsigned char get_maze_value(MAZE maze, int x, int y);
 static inline void set_maze_value(MAZE maze, int x, int y, unsigned char val);

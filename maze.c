@@ -1,12 +1,36 @@
 #include "maze.h"
 
-MAZE construct_maze(int width, int height)
+MAZE construct_maze(int width, int height, unsigned char wall_adder)
 {
     MAZE maze;
     int size = width * height;
     unsigned char* values = (unsigned char*)malloc(sizeof(unsigned char) * size);
-    for (int i = 0; i < size; i++)
-        values[i] = 0;
+    if (wall_adder)
+    {
+        values[0] = 6;
+        values[width - 1] = 12;
+        values[(height - 1) * width] = 3;
+        values[height * width - 1] = 9;
+        for (int x = 1; x < width - 1; x++)
+        {
+            values[x] = 14;
+            values[(height - 1) * width + x] = 11;
+        }
+        for (int y = 1; y < height - 1; y++)
+        {
+            values[y * width + 0] = 7;
+            for (int x = 1; x < width - 1; x++)
+            {
+                values[y * width + x] = 15;
+            }
+            values[y * width + width - 1] = 13;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < size; i++)
+            values[i] = 0;
+    }
     maze.values = values;
     maze.width = width;
     maze.height = height;

@@ -18,6 +18,8 @@ void must_init(bool test, const char *description)
 ALLEGRO_EVENT_QUEUE *queue;
 ALLEGRO_TIMER *timer;
 
+unsigned char wall_adder;
+
 int BUFFER_W;
 int BUFFER_H;
 
@@ -260,6 +262,9 @@ int main()
     user_get_maze_dimentions(&maze_w, &maze_h);
     int algorithm;
     user_get_algorithm(&algorithm);
+    wall_adder = 0;
+    if (algorithm == 4)
+        wall_adder = 1;
 
     BUFFER_W = maze_w * TILE_W;
     BUFFER_H = maze_h * TILE_H;
@@ -281,7 +286,7 @@ int main()
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
     // setup_scene();
-    maze = construct_maze(maze_w, maze_h);
+    maze = construct_maze(maze_w, maze_h, wall_adder);
     draw_maze();
     switch (algorithm)
     {

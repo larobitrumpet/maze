@@ -445,24 +445,6 @@ static void recursive_division_recurse(MAZE maze, int x, int y, int width, int h
 
 void recursive_division(MAZE maze)
 {
-    maze.values[0] = 6;
-    maze.values[maze.width - 1] = 12;
-    maze.values[(maze.height - 1) * maze.width] = 3;
-    maze.values[maze.height * maze.width - 1] = 9;
-    for (int x = 1; x < maze.width - 1; x++)
-    {
-        maze.values[x] = 14;
-        maze.values[(maze.height - 1) * maze.width + x] = 11;
-    }
-    for (int y = 1; y < maze.height - 1; y++)
-    {
-        maze.values[y * maze.width + 0] = 7;
-        for (int x = 1; x < maze.width - 1; x++)
-        {
-            maze.values[y * maze.width + x] = 15;
-        }
-        maze.values[y * maze.width + maze.width - 1] = 13;
-    }
     update_maze_display();
     recursive_division_recurse(maze, 0, 0, maze.width, maze.height);
 }
