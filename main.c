@@ -15,6 +15,9 @@ void must_init(bool test, const char *description)
     printf("Couldn't initialize %s\n", description);
 }
 
+ALLEGRO_EVENT_QUEUE *queue;
+ALLEGRO_TIMER *timer;
+
 int BUFFER_W;
 int BUFFER_H;
 
@@ -30,7 +33,7 @@ ALLEGRO_BITMAP *buffer;
 
 void disp_init()
 {
-    al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW + ALLEGRO_RESIZABLE);
+    al_set_new_display_flags(ALLEGRO_RESIZABLE);
     al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
     al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 16, ALLEGRO_SUGGEST);
@@ -171,6 +174,15 @@ void sprites_deinit()
     al_destroy_bitmap(sprites._sheet);
 }
 
+void deinit()
+{
+    deconstruct_maze(maze);
+    sprites_deinit();
+    disp_deinit();
+    al_destroy_timer(timer);
+    al_destroy_event_queue(queue);
+}
+
 void draw_maze()
 {
     disp_pre_draw();
@@ -199,6 +211,22 @@ void draw()
 
 void update_maze_display()
 {
+    while (!(al_is_event_queue_empty(queue)))
+    {
+        ALLEGRO_EVENT event;
+
+        al_wait_for_event(queue, &event);
+        switch (event.type)
+        {
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                deinit();
+                exit(0);
+                break;
+            case ALLEGRO_EVENT_DISPLAY_RESIZE:
+                al_acknowledge_resize(disp);
+                break;
+        }
+    }
     //print_maze(maze);
     disp_pre_draw();
 
@@ -214,8 +242,6 @@ void update_maze_display()
 int main()
 {
     srand((unsigned)time(NULL));
-    ALLEGRO_TIMER *timer;
-    ALLEGRO_EVENT_QUEUE *queue;
 
     int redraw = true;
     must_init(al_init(), "Allegro");
@@ -332,11 +358,7 @@ int main()
     }
 
     // deinit
-    deconstruct_maze(maze);
-    sprites_deinit();
-    disp_deinit();
-    al_destroy_timer(timer);
-    al_destroy_event_queue(queue);
+    deinit();
 
     return 0;
 }
