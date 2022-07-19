@@ -14,11 +14,13 @@ MAZE construct_maze(int width, int height)
     maze.pos_y = (int*)malloc(sizeof(int));
     *(maze.pos_x) = -1;
     *(maze.pos_y) = -1;
+    maze.update = construct_set();
     return maze;
 }
 
 void deconstruct_maze(MAZE maze)
 {
+    deconstruct_set(maze.update);
     free(maze.values);
     free(maze.pos_x);
     free(maze.pos_y);
@@ -66,46 +68,68 @@ static inline void maze_set_close(MAZE maze, int x, int y, enum Direction dir)
 
 void maze_carve_passage(MAZE maze, enum Direction dir)
 {
-    maze_set_open(maze, *(maze.pos_x), *(maze.pos_y), dir);
+    POINT p;
+    p.x = *(maze.pos_x);
+    p.y = *(maze.pos_y);
+    set_add(maze.update, p);
+    maze_set_open(maze, p.x, p.y, dir);
+    enum Direction op_dir;
     switch (dir)
     {
         case up:
-            maze_set_open(maze, *(maze.pos_x), *(maze.pos_y) - 1, down);
+            p.y--;
+            op_dir = down;
             break;
         case right:
-            maze_set_open(maze, *(maze.pos_x) + 1, *(maze.pos_y), left);
+            p.x++;
+            op_dir = left;
             break;
         case down:
-            maze_set_open(maze, *(maze.pos_x), *(maze.pos_y) + 1, up);
+            p.y++;
+            op_dir = up;
             break;
         case left:
-            maze_set_open(maze, *(maze.pos_x) - 1, *(maze.pos_y), right);
+            p.x--;
+            op_dir = right;
             break;
         default:
             break;
     }
+    maze_set_open(maze, p.x, p.y, op_dir);
+    set_add(maze.update, p);
 }
 
 void maze_fill_passage(MAZE maze, enum Direction dir)
 {
-    maze_set_close(maze, *(maze.pos_x), *(maze.pos_y), dir);
+    POINT p;
+    p.x = *(maze.pos_x);
+    p.y = *(maze.pos_y);
+    set_add(maze.update, p);
+    maze_set_close(maze, p.x, p.y, dir);
+    enum Direction op_dir;
     switch (dir)
     {
         case up:
-            maze_set_close(maze, *(maze.pos_x), *(maze.pos_y) - 1, down);
+            p.y--;
+            op_dir = down;
             break;
         case right:
-            maze_set_close(maze, *(maze.pos_x) + 1, *(maze.pos_y), left);
+            p.x++;
+            op_dir = left;
             break;
         case down:
-            maze_set_close(maze, *(maze.pos_x), *(maze.pos_y) + 1, up);
+            p.y++;
+            op_dir = up;
             break;
         case left:
-            maze_set_close(maze, *(maze.pos_x) - 1, *(maze.pos_y), right);
+            p.x--;
+            op_dir = right;
             break;
         default:
             break;
     }
+    maze_set_close(maze, p.x, p.y, op_dir);
+    set_add(maze.update, p);
 }
 
 static inline void maze_set_pos_value(MAZE maze, int x, int y)
@@ -124,6 +148,13 @@ void maze_set_pos(MAZE maze, int x, int y)
         maze_clear_pos_value(maze, *(maze.pos_x), *(maze.pos_y));
     if (x >= 0 && y >= 0)
         maze_set_pos_value(maze, x, y);
+    POINT p;
+    p.x = *(maze.pos_x);
+    p.y = *(maze.pos_y);
+    set_add(maze.update, p);
+    p.x = x;
+    p.y = y;
+    set_add(maze.update, p);
     *(maze.pos_x) = x;
     *(maze.pos_y) = y;
 }
@@ -131,11 +162,19 @@ void maze_set_pos(MAZE maze, int x, int y)
 void maze_set_special_value(MAZE maze, int x, int y)
 {
     set_maze_bit(maze, x, y, 5);
+    POINT p;
+    p.x = x;
+    p.y = y;
+    set_add(maze.update, p);
 }
 
 void maze_clear_special_value(MAZE maze, int x, int y)
 {
     clear_maze_bit(maze, x, y, 5);
+    POINT p;
+    p.x = x;
+    p.y = y;
+    set_add(maze.update, p);
 }
 
 void maze_set_visited(MAZE maze, int x, int y)

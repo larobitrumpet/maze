@@ -48,6 +48,19 @@ void set_add(SET* set, POINT p)
     }
 }
 
+POINT set_pop(SET* set)
+{
+    if (set_is_empty(set))
+    {
+        POINT p;
+        p.x = -1;
+        p.y = -1;
+        return p;
+    }
+    set->length--;
+    return set->points[set->length];
+}
+
 POINT set_pop_random(SET* set)
 {
     if (set_is_empty(set))

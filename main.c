@@ -4,6 +4,7 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include "maze.h"
+#include "stack.h"
 #include "algorithms.h"
 #include "user_input.h"
 
@@ -172,6 +173,8 @@ void sprites_deinit()
 
 void draw_maze()
 {
+    disp_pre_draw();
+
     for (int y = 0; y < maze.height; y++)
     {
         for (int x = 0; x < maze.width; x++)
@@ -179,6 +182,8 @@ void draw_maze()
             al_draw_bitmap(sprites.tiles[get_maze_type_value(maze, x, y)][get_maze_passage_value(maze, x, y)], x * TILE_W, y * TILE_H, 0);
         }
     }
+
+    disp_post_draw();
 }
 
 void draw()
@@ -186,8 +191,8 @@ void draw()
     disp_pre_draw();
 
     // draw code
-    al_clear_to_color(al_map_rgb(0, 0, 0));
-    draw_maze();
+    //al_clear_to_color(al_map_rgb(0, 0, 0));
+    update_maze_display();
 
     disp_post_draw();
 }
@@ -195,7 +200,15 @@ void draw()
 void update_maze_display()
 {
     //print_maze(maze);
-    draw();
+    disp_pre_draw();
+
+    while (!(set_is_empty(maze.update)))
+    {
+        POINT p = set_pop(maze.update);
+        al_draw_bitmap(sprites.tiles[get_maze_type_value(maze, p.x, p.y)][get_maze_passage_value(maze, p.x, p.y)], p.x * TILE_W, p.y * TILE_H, 0);
+    }
+
+    disp_post_draw();
 }
 
 int main()
@@ -243,6 +256,7 @@ int main()
 
     // setup_scene();
     maze = construct_maze(maze_w, maze_h);
+    draw_maze();
     switch (algorithm)
     {
         case 0:

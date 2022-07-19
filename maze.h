@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "point.h"
+#include "set.h"
 
 #ifndef MAZE_H
 #define MAZE_H
@@ -13,6 +15,7 @@ typedef struct MAZE
     int* pos_y;
     int width;
     int height;
+    SET* update;
 } MAZE;
 
 MAZE construct_maze(int width, int height);
