@@ -203,7 +203,7 @@ void kruskal(MAZE maze)
     int num_edges = maze.width * maze.height * 2 - maze.width - maze.height;
     EDGE** edges = (EDGE**)malloc(sizeof(EDGE*) * num_edges);
     enum Direction dirs[2] = {right, down};
-    int i;
+    int i = 0;
     for (int y = 0; y < maze.height - 1; y++)
     {
         for (int x = 0; x < maze.width - 1; x++)
