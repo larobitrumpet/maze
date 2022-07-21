@@ -1,5 +1,5 @@
-main: main.o maze.o algorithms.o stack.o random.o tree.o set.o point.o willson_path.o user_input.o
-	gcc main.o maze.o algorithms.o stack.o random.o tree.o set.o point.o willson_path.o user_input.o -o main $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
+main: main.o maze.o algorithms.o stack.o random.o tree.o set.o point.o willson_path.o deque.o user_input.o deque.o
+	gcc main.o maze.o algorithms.o stack.o random.o tree.o set.o point.o willson_path.o user_input.o deque.o -o main $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
 
 main.o: main.c maze.h algorithms.h user_input.h
 	gcc -c main.c -o main.o
@@ -31,13 +31,16 @@ willson_path.o: willson_path.c point.h maze.h
 user_input.o: user_input.c
 	gcc -c user_input.c -o user_input.o
 
+deque.o: deque.c point.h random.h
+	gcc -c deque.c -o deque.o
+
 run: main
 	./main
 
 debug: main_debug
 
-main_debug: main_debug.o maze_debug.o algorithms_debug.o stack_debug.o random_debug.o tree_debug.o set_debug.o point_debug.o willson_path_debug.o user_input_debug.o
-	gcc -g main_debug.o maze_debug.o algorithms_debug.o stack_debug.o random_debug.o tree_debug.o set_debug.o point_debug.o willson_path_debug.o user_input_debug.o -o main_debug $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
+main_debug: main_debug.o maze_debug.o algorithms_debug.o stack_debug.o random_debug.o tree_debug.o set_debug.o point_debug.o willson_path_debug.o user_input_debug.o deque_debug.o
+	gcc -g main_debug.o maze_debug.o algorithms_debug.o stack_debug.o random_debug.o tree_debug.o set_debug.o point_debug.o willson_path_debug.o user_input_debug.o deque_debug.o -o main_debug $$(pkg-config allegro-5 allegro_image-5 --libs --cflags)
 
 main_debug.o: main.c maze.h algorithms.h user_input.h
 	gcc -g -c main.c -o main_debug.o
@@ -68,6 +71,9 @@ willson_path_debug.o: willson_path.c
 
 user_input_debug.o: user_input.c
 	gcc -g -c user_input.c -o user_input_debug.o
+
+deque_debug.o: deque.c
+	gcc -g -c deque.c -o deque_debug.o
 
 run_debug: main_debug
 	gdb ./main_debug
