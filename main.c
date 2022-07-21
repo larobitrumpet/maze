@@ -260,11 +260,14 @@ int main()
     int maze_w;
     int maze_h;
     user_get_maze_dimentions(&maze_w, &maze_h);
-    //int algorithm;
-    //user_get_algorithm(&algorithm);
+    int algorithm;
+    user_get_algorithm(&algorithm);
     wall_adder = 0;
-    //if (algorithm == 4)
-    //    wall_adder = 1;
+    int weights[5] = {0, 0, 0, 0, 0};
+    if (algorithm == 4)
+        wall_adder = 1;
+    if (algorithm == 8)
+        user_get_growing_tree_weights(weights);
 
     BUFFER_W = maze_w * TILE_W;
     BUFFER_H = maze_h * TILE_H;
@@ -288,37 +291,37 @@ int main()
     // setup_scene();
     maze = construct_maze(maze_w, maze_h, wall_adder);
     draw_maze();
-    //switch (algorithm)
-    //{
-    //    case 0:
-    //        recursive_backtracking(maze);
-    //        break;
-    //    case 1:
-    //        eller(maze);
-    //        break;
-    //    case 2:
-    //        kruskal(maze);
-    //        break;
-    //    case 3:
-    //        prim(maze);
-    //        break;
-    //    case 4:
-    //        recursive_division(maze);
-    //        break;
-    //    case 5:
-    //        aldous_broder(maze);
-    //        break;
-    //    case 6:
-    //        willson(maze);
-    //        break;
-    //    case 7:
-    //        hunt_and_kill(maze);
-    //        break;
-    //    default:
-    //        break;
-    //}
-    int weights[5] = {1, 1, 1, 1, 4};
-    growing_tree(maze, weights);
+    switch (algorithm)
+    {
+        case 0:
+            recursive_backtracking(maze);
+            break;
+        case 1:
+            eller(maze);
+            break;
+        case 2:
+            kruskal(maze);
+            break;
+        case 3:
+            prim(maze);
+            break;
+        case 4:
+            recursive_division(maze);
+            break;
+        case 5:
+            aldous_broder(maze);
+            break;
+        case 6:
+            willson(maze);
+            break;
+        case 7:
+            hunt_and_kill(maze);
+            break;
+        case 8:
+            growing_tree(maze, weights);
+        default:
+            break;
+    }
 
     bool done = false;
     al_start_timer(timer);
