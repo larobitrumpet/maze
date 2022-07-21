@@ -756,3 +756,96 @@ void hunt_and_kill(MAZE maze)
         y = p.y;
     }
 }
+
+static unsigned char growing_tree_step(MAZE maze, DEQUE* frontier, POINT p)
+{
+    maze_set_pos(maze, p.x, p.y);
+
+    enum Direction directions[4] = {up, right, down, left};
+    shuffle(directions, 4, sizeof(enum Direction));
+
+    for (int i = 0; i < 4; i++)
+    {
+        int new_x = p.x;
+        int new_y = p.y;
+        unsigned char valid = 0;
+        switch (directions[i])
+        {
+            case up:
+                new_y -= 1;
+                if (new_y >= 0)
+                    valid = 1;
+                break;
+            case right:
+                new_x += 1;
+                if (new_x < maze.width)
+                    valid = 1;
+                break;
+            case down:
+                new_y += 1;
+                if (new_y < maze.height)
+                    valid = 1;
+                break;
+            case left:
+                new_x -= 1;
+                if (new_x >= 0)
+                    valid = 1;
+                break;
+            default:
+                break;
+        }
+        if (valid && !(maze_get_visited(maze, new_x, new_y)))
+        {
+            maze_carve_passage(maze, directions[i]);
+            maze_set_special_value(maze, new_x, new_y);
+            maze_set_visited(maze, new_x, new_y);
+            POINT p_add = {new_x, new_y};
+            deque_push_back(frontier, p_add);
+            update_maze_display();
+            return 0;
+        }
+    }
+    maze_clear_special_value(maze, p.x, p.y);
+    update_maze_display();
+    return 1;
+}
+
+void growing_tree(MAZE maze, int weights[5])
+{
+    DEQUE* frontier = construct_deque();
+    POINT p = {0, 0};
+    maze_set_special_value(maze, 0, 0);
+    maze_set_visited(maze, 0, 0);
+    deque_push_back(frontier, p);
+    while (!(deque_is_empty(frontier)))
+    {
+        int pop_type = rand_weighted(weights, 5);
+        switch (pop_type)
+        {
+            case 0:
+                p = deque_peak_front(frontier);
+                if (growing_tree_step(maze, frontier, p))
+                    deque_pop_front(frontier);
+                break;
+            case 1:
+                p = deque_peak_back(frontier);
+                if (growing_tree_step(maze, frontier, p))
+                    deque_pop_back(frontier);
+                break;
+            case 2:
+                p = deque_peak_middle(frontier);
+                if (growing_tree_step(maze, frontier, p))
+                    deque_pop_middle(frontier);
+                break;
+            case 3:
+                deque_choose_random(frontier);
+                p = deque_peak_random(frontier);
+                if (growing_tree_step(maze, frontier, p))
+                    deque_pop_random(frontier);
+                break;
+            default:
+                break;
+        }
+    }
+    deconstruct_deque(frontier);
+}

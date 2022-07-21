@@ -6,6 +6,7 @@
 #include "tree.h"
 #include "set.h"
 #include "willson_path.h"
+#include "deque.h"
 
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
@@ -48,5 +49,7 @@ static void hunt_and_kill_walk(MAZE maze, int x, int y);
 static unsigned char hunt_and_kill_unvisited_with_visited_neighbors(MAZE maze, int x, int y);
 static POINT hunt_and_kill_hunt(MAZE maze, int start_x, int start_y);
 void hunt_and_kill(MAZE maze);
+static unsigned char growing_tree_step(MAZE maze, DEQUE* frontier, POINT p);
+void growing_tree(MAZE maze, int weights[5]);
 
 #endif

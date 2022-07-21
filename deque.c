@@ -10,6 +10,7 @@ DEQUE* construct_deque()
     DEQUE* deque = (DEQUE*)malloc(sizeof(DEQUE));
     POINT* arr = (POINT*)malloc(sizeof(POINT) * DEQUE_INIT_SIZE);
     deque->arr = arr;
+    deque->size = DEQUE_INIT_SIZE;
     deque->front = 0;
     deque->back = 0;
     deque->random = 0;
@@ -161,6 +162,7 @@ POINT deque_pop_middle(DEQUE* deque)
         deque->arr[i] = deque->arr[j];
         i = j;
     }
+    deque->back = end;
     return p;
 }
 
@@ -181,5 +183,6 @@ POINT deque_pop_random(DEQUE* deque)
         deque->arr[i] = deque->arr[j];
         i = j;
     }
+    deque->back = end;
     return p;
 }
