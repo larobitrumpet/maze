@@ -323,6 +323,9 @@ int main()
         case 9:
             binary_tree(maze);
             break;
+        case 10:
+            sidewinder(maze);
+            break;
         default:
             break;
     }

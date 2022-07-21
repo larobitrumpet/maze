@@ -872,3 +872,35 @@ void binary_tree(MAZE maze)
         }
     }
 }
+
+void sidewinder(MAZE maze)
+{
+    for (int x = 0; x < maze.width - 1; x++)
+    {
+        maze_set_pos(maze, x, 0);
+        maze_carve_passage(maze, right);
+        update_maze_display();
+    }
+    for (int y = 1; y < maze.height; y++)
+    {
+        int run_start = 0;
+        for (int x = 0; x < maze.width - 1; x++)
+        {
+            if (between(0, 2))
+            {
+                maze_set_pos(maze, x, y);
+                maze_carve_passage(maze, right);
+            }
+            else
+            {
+                maze_set_pos(maze, between(run_start, x + 1), y);
+                maze_carve_passage(maze, up);
+                run_start = x + 1;
+            }
+            update_maze_display();
+        }
+        maze_set_pos(maze, between(run_start, maze.width), y);
+        maze_carve_passage(maze, up);
+        update_maze_display();
+    }
+}

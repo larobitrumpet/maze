@@ -47,10 +47,11 @@ void user_get_algorithm(int* al)
     printf("  7: Hunt-and-Kill\n");
     printf("  8: Growing Tree\n");
     printf("  9: Binary Tree\n");
+    printf(" 10: Sidewinder\n");
     while (1)
     {
         *al = user_get_integer("Enter maze number: ");
-        if (*al >= 0 && *al < 10)
+        if (*al >= 0 && *al < 11)
             break;
         printf("Please enter a valid maze number\n");
     }
