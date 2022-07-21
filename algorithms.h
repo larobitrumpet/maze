@@ -51,5 +51,6 @@ static POINT hunt_and_kill_hunt(MAZE maze, int start_x, int start_y);
 void hunt_and_kill(MAZE maze);
 static unsigned char growing_tree_step(MAZE maze, DEQUE* frontier, POINT p);
 void growing_tree(MAZE maze, int weights[5]);
+void binary_tree(MAZE maze);
 
 #endif

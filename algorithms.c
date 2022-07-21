@@ -849,3 +849,26 @@ void growing_tree(MAZE maze, int weights[5])
     }
     deconstruct_deque(frontier);
 }
+
+void binary_tree(MAZE maze)
+{
+    enum Direction dirs[2] = {up, left};
+    for (int x = 1; x < maze.width; x++)
+    {
+        maze_set_pos(maze, x, 0);
+        maze_carve_passage(maze, left);
+        update_maze_display();
+    }
+    for (int y = 1; y < maze.height; y++)
+    {
+        maze_set_pos(maze, 0, y);
+        maze_carve_passage(maze, up);
+        update_maze_display();
+        for (int x = 1; x < maze.width; x++)
+        {
+            maze_set_pos(maze, x, y);
+            maze_carve_passage(maze, dirs[between(0, 2)]);
+            update_maze_display();
+        }
+    }
+}

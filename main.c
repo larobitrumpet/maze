@@ -319,6 +319,10 @@ int main()
             break;
         case 8:
             growing_tree(maze, weights);
+            break;
+        case 9:
+            binary_tree(maze);
+            break;
         default:
             break;
     }
