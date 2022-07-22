@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include "point.h"
 #include "maze.h"
-#include "stack.h"
 #include "random.h"
 #include "tree.h"
 #include "set.h"

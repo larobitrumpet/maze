@@ -4,7 +4,6 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include "maze.h"
-#include "stack.h"
 #include "algorithms.h"
 #include "user_input.h"
 
