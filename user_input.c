@@ -73,12 +73,12 @@ void user_get_growing_tree_weights(int weights[5])
 
 void user_get_tile_type(int* tile_type)
 {
-    printf("Select a tile set to display the maze (1 or 2):\n");
+    printf("Select a tile set to display the maze (1, 2, or 3):\n");
     while (1)
     {
         *tile_type = user_get_integer("  Tile set: ");
-        if (*tile_type >= 1 && *tile_type < 3)
+        if (*tile_type >= 1 && *tile_type < 4)
             break;
-        printf("Please choose either 1 or 2.\n");
+        printf("Please choose either 1, 2, or 3.\n");
     }
 }
