@@ -45,6 +45,8 @@ If you only want to choose the newest cell added, then give newest a weight of 1
 ```
 Choosing only the newest is equivelent to the Recursive Backtracking algorithm and choosing only randomly is equivelent to Prim's algorithm.
 
+You will then be asked to select a tile set. This will determine how the maze looks.
+
 ## License
 
 This application is licensed under the [MIT License](LICENSE)
