@@ -168,17 +168,21 @@ static inline void maze_clear_pos_value(MAZE maze, int x, int y)
 
 void maze_set_pos(MAZE maze, int x, int y)
 {
-    if (*(maze.pos_x) >= 0 && *(maze.pos_y) >= 0)
-        maze_clear_pos_value(maze, *(maze.pos_x), *(maze.pos_y));
-    if (x >= 0 && y >= 0)
-        maze_set_pos_value(maze, x, y);
     POINT p;
-    p.x = *(maze.pos_x);
-    p.y = *(maze.pos_y);
-    set_add(maze.update, p);
-    p.x = x;
-    p.y = y;
-    set_add(maze.update, p);
+    if (*(maze.pos_x) >= 0 && *(maze.pos_y) >= 0)
+    {
+        maze_clear_pos_value(maze, *(maze.pos_x), *(maze.pos_y));
+        p.x = *(maze.pos_x);
+        p.y = *(maze.pos_y);
+        set_add(maze.update, p);
+    }
+    if (x >= 0 && y >= 0)
+    {
+        maze_set_pos_value(maze, x, y);
+        p.x = x;
+        p.y = y;
+        set_add(maze.update, p);
+    }
     *(maze.pos_x) = x;
     *(maze.pos_y) = y;
 }

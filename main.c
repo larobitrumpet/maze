@@ -329,6 +329,10 @@ int main()
             break;
     }
 
+    maze_set_pos(maze, -1, -1);
+    update_maze_display();
+    al_save_bitmap("maze.png", buffer);
+
     bool done = false;
     al_start_timer(timer);
     while(true)
