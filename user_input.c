@@ -64,7 +64,7 @@ void user_get_growing_tree_weights(int weights[5])
     printf("Select weights for these different methods.\n");
     printf("To select only one method, give a weight of 1 to that\n");
     printf("method and a weight of 0 to all other methods.\n");
-    weights[1] = user_get_integer("  Newests: ");
+    weights[1] = user_get_integer("  Newest: ");
     weights[3] = user_get_integer("  Random: ");
     weights[2] = user_get_integer("  Middle: ");
     weights[0] = user_get_integer("  Oldest: ");
