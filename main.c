@@ -148,9 +148,19 @@ ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
     return sprite;
 }
 
-void sprites_init()
+void sprites_init(int tile_type)
 {
-    sprites._sheet = al_load_bitmap("maze_tiles.png");
+    switch (tile_type)
+    {
+        case 1:
+            sprites._sheet = al_load_bitmap("maze_tiles_1.png");
+            break;
+        case 2:
+            sprites._sheet = al_load_bitmap("maze_tiles_2.png");
+            break;
+        default:
+            break;
+    }
     must_init(sprites._sheet, "maze tiles");
 
     for (int i = 0; i < 3; i++)
@@ -267,13 +277,15 @@ int main()
         wall_adder = 1;
     if (algorithm == 8)
         user_get_growing_tree_weights(weights);
+    int tile_type;
+    user_get_tile_type(&tile_type);
 
     BUFFER_W = maze_w * TILE_W;
     BUFFER_H = maze_h * TILE_H;
 
     disp_init();
 
-    sprites_init();
+    sprites_init(tile_type);
 
     keyboard_init();
 
