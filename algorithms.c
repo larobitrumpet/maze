@@ -11,12 +11,13 @@ static unsigned char in_list(int* list, int length, int item)
     return 0;
 }
 
-void recursive_backtracking_carve_passage_from(MAZE maze, int x, int y)
+int recursive_backtracking_carve_passage_from(MAZE maze, int x, int y)
 {
     maze_set_pos(maze, x, y);
     maze_set_special_value(maze, x, y);
     maze_set_visited(maze, x, y);
-    update_maze_display();
+    if (update_maze_display())
+        return 1;
     enum Direction directions[4] = {up, right, down, left};
     shuffle(directions, 4, sizeof(enum Direction));
 
@@ -53,17 +54,22 @@ void recursive_backtracking_carve_passage_from(MAZE maze, int x, int y)
         if (valid && !(maze_get_visited(maze, new_x, new_y)))
         {
             maze_carve_passage(maze, directions[i]);
-            recursive_backtracking_carve_passage_from(maze, new_x, new_y);
+            if (recursive_backtracking_carve_passage_from(maze, new_x, new_y))
+                return 1;
             maze_set_pos(maze, x, y);
-            update_maze_display();
+            if (update_maze_display())
+                return 1;
         }
     }
     maze_clear_special_value(maze, x, y);
+    return 0;
 }
 
-void recursive_backtracking(MAZE maze)
+int recursive_backtracking(MAZE maze)
 {
-    recursive_backtracking_carve_passage_from(maze, 0, 0);
+    if (recursive_backtracking_carve_passage_from(maze, 0, 0))
+        return 1;
+    return 0;
 }
 
 static inline unsigned char eller_same_set(int* row, int x)
@@ -93,18 +99,20 @@ static void eller_join_down(MAZE maze, int* row, int* next_row)
     maze_carve_passage(maze, up);
 }
 
-static int* eller_row(MAZE maze, int* row, int* next_row)
+static int eller_row(MAZE maze, int* row, int* next_row)
 {
     int y = *(maze.pos_y);
     for (int x = 0; x < maze.width - 1; x++)
     {
         maze_set_pos(maze, x, y);
-        update_maze_display();
+        if (update_maze_display())
+            return 1;
         if (!(eller_same_set(row, x)) && between(0, 2))
             eller_join_right(maze, row);
     }
     maze_set_pos(maze, maze.width - 1, y);
-    update_maze_display();
+    if (update_maze_display())
+        return 1;
     int sets[maze.width];
     int num_sets = 0;
     for (int i = 0; i < maze.width; i++)
@@ -135,26 +143,33 @@ static int* eller_row(MAZE maze, int* row, int* next_row)
         {
             maze_set_pos(maze, set_indexes[j], y);
             eller_join_down(maze, row, next_row);
-            update_maze_display();
+            if (update_maze_display())
+                return 1;
         }
     }
+
+    return 0;
 }
 
-static void eller_last_row(MAZE maze, int* row)
+static int eller_last_row(MAZE maze, int* row)
 {
     int y = *(maze.pos_y);
     for (int x = 0; x < maze.width - 1; x++)
     {
         maze_set_pos(maze, x, y);
-        update_maze_display();
+        if (update_maze_display())
+            return 1;
         if (!(eller_same_set(row, x)))
             eller_join_right(maze, row);
     }
     maze_set_pos(maze, maze.width - 1, y);
-    update_maze_display();
+    if (update_maze_display())
+        return 1;
+
+    return 0;
 }
 
-void eller(MAZE maze)
+int eller(MAZE maze)
 {
     int next_set = 0;
     int* row = (int*)malloc(sizeof(int) * maze.width);
@@ -172,13 +187,24 @@ void eller(MAZE maze)
             next_row[x] = next_set;
             next_set++;
         }
-        eller_row(maze, row, next_row);
+        if (eller_row(maze, row, next_row))
+        {
+            free(row);
+            free(next_row);
+            return 1;
+        }
         free(row);
         row = next_row;
     }
     maze_set_pos(maze, 0, maze.height - 1);
-    eller_last_row(maze, row);
+    if (eller_last_row(maze, row))
+    {
+        free(row);
+        return 1;
+    }
     free(row);
+
+    return 0;
 }
 
 static inline TREE* kruskal_get_set(TREE** sets, int x, int y, int maze_w)
@@ -186,7 +212,7 @@ static inline TREE* kruskal_get_set(TREE** sets, int x, int y, int maze_w)
     return sets[y * maze_w + x];
 }
 
-void kruskal(MAZE maze)
+int kruskal(MAZE maze)
 {
     TREE** sets = (TREE**)malloc(sizeof(TREE*) * maze.width * maze.height);
     for (int y = 0; y < maze.height; y++)
@@ -242,7 +268,17 @@ void kruskal(MAZE maze)
     shuffle(edges, num_edges, sizeof(EDGE*));
 
     maze_set_pos(maze, 0, 0);
-    update_maze_display();
+    if (update_maze_display())
+    {
+        int size = maze.width * maze.height;
+        for (int i = 0; i < size; i++)
+            deconstruct_TREE(sets[i]);
+        free(sets);
+        for (int i = 0; i < num_edges; i++)
+            free(edges[i]);
+        free(edges);
+        return 1;
+    }
     for (int i = 0; i < num_edges; i++)
     {
         int x1 = edges[i]->x;
@@ -269,13 +305,25 @@ void kruskal(MAZE maze)
             tree_union(kruskal_get_set(sets, x1, y1, maze.width), kruskal_get_set(sets, x2, y2, maze.width));
             maze_carve_passage(maze, edges[i]->dir);
         }
-        update_maze_display();
+        if (update_maze_display())
+        {
+            int size = maze.width * maze.height;
+            for (int j = 0; j < size; j++)
+                free(sets[j]);
+            free(sets);
+            for (int j = i; j < num_edges; j++)
+                free(edges[j]);
+            free(edges);
+            return 1;
+        }
         free(edges[i]);
     }
 
     free(edges);
     deconstruct_TREE(get_root(sets[0]));
     free(sets);
+
+    return 0;
 }
 
 static void prim_add_neighbors_to_frontier(MAZE maze, SET* frontier)
@@ -371,22 +419,32 @@ static void prim_join_from_frontier(MAZE maze)
     }
 }
 
-void prim(MAZE maze)
+int prim(MAZE maze)
 {
     SET* frontier = construct_set();
     maze_set_pos(maze, 0, 0);
     maze_set_visited(maze, 0, 0);
     prim_add_neighbors_to_frontier(maze, frontier);
-    update_maze_display();
+    if (update_maze_display())
+    {
+        deconstruct_set(frontier);
+        return 1;
+    }
     while (!(set_is_empty(frontier)))
     {
         POINT p = set_pop_random(frontier);
         maze_set_pos(maze, p.x, p.y);
         prim_join_from_frontier(maze);
         prim_add_neighbors_to_frontier(maze, frontier);
-        update_maze_display();
+        if (update_maze_display())
+        {
+            deconstruct_set(frontier);
+            return 1;
+        }
     }
     deconstruct_set(frontier);
+
+    return 0;
 }
 
 static enum Orientation recursive_division_pick_orientation(int width, int height)
@@ -401,10 +459,10 @@ static enum Orientation recursive_division_pick_orientation(int width, int heigh
         return horizontal;
 }
 
-static void recursive_division_recurse(MAZE maze, int x, int y, int width, int height)
+static int recursive_division_recurse(MAZE maze, int x, int y, int width, int height)
 {
     if (width == 1 || height == 1)
-        return;
+        return 0;
     enum Orientation or = recursive_division_pick_orientation(width, height);
     int wall;
     int i;
@@ -420,9 +478,12 @@ static void recursive_division_recurse(MAZE maze, int x, int y, int width, int h
             i = between(y, height + y - 1);
             maze_set_pos(maze, wall, i);
             maze_carve_passage(maze, right);
-            update_maze_display();
-            recursive_division_recurse(maze, x, y, wall + 1 - x, height);
-            recursive_division_recurse(maze, wall + 1 , y, width - wall + x - 1, height);
+            if (update_maze_display())
+                return 1;
+            if (recursive_division_recurse(maze, x, y, wall + 1 - x, height))
+                return 1;
+            if (recursive_division_recurse(maze, wall + 1 , y, width - wall + x - 1, height))
+                return 1;
             break;
         case horizontal:
             wall = between(y, height + y - 2);
@@ -434,22 +495,31 @@ static void recursive_division_recurse(MAZE maze, int x, int y, int width, int h
             i = between(x, width + x - 1);
             maze_set_pos(maze, i, wall);
             maze_carve_passage(maze, down);
-            update_maze_display();
-            recursive_division_recurse(maze, x, y, width, wall + 1 - y);
-            recursive_division_recurse(maze, x, wall + 1, width, height - wall + y - 1);
+            if (update_maze_display())
+                return 1;
+            if (recursive_division_recurse(maze, x, y, width, wall + 1 - y))
+                return 1;
+            if (recursive_division_recurse(maze, x, wall + 1, width, height - wall + y - 1))
+                return 1;
             break;
         default:
             break;
     }
+
+    return 0;
 }
 
-void recursive_division(MAZE maze)
+int recursive_division(MAZE maze)
 {
-    update_maze_display();
-    recursive_division_recurse(maze, 0, 0, maze.width, maze.height);
+    if(update_maze_display())
+        return 1;
+    if (recursive_division_recurse(maze, 0, 0, maze.width, maze.height))
+        return 1;
+
+    return 0;
 }
 
-void aldous_broder(MAZE maze)
+int aldous_broder(MAZE maze)
 {
     int remaining = maze.width * maze.height;
     maze_set_pos(maze, 0, 0);
@@ -499,11 +569,14 @@ void aldous_broder(MAZE maze)
                     remaining--;
                 }
                 maze_set_pos(maze, new_x, new_y);
-                update_maze_display();
+                if (update_maze_display())
+                    return 1;
                 break;
             }
         }
     }
+
+    return 0;
 }
 
 static WILLSON_PATH* willson_get_willson_path(MAZE maze, SET* not_in_maze, POINT start)
@@ -555,12 +628,16 @@ static WILLSON_PATH* willson_get_willson_path(MAZE maze, SET* not_in_maze, POINT
         current.x = new_x;
         current.y = new_y;
         maze_set_pos(maze, current.x, current.y);
-        update_maze_display();
+        if (update_maze_display())
+        {
+            free(path);
+            return NULL;
+        }
     }
     return path;
 }
 
-static void willson_follow_willson_path(MAZE maze, SET* not_in_maze, WILLSON_PATH* path)
+static int willson_follow_willson_path(MAZE maze, SET* not_in_maze, WILLSON_PATH* path)
 {
     for (int i = 0; i < path->length; i++)
     {
@@ -568,11 +645,14 @@ static void willson_follow_willson_path(MAZE maze, SET* not_in_maze, WILLSON_PAT
         maze_carve_passage(maze, path->dirs[i]);
         maze_clear_special_value(maze, path->points[i].x, path->points[i].y);
         set_remove(not_in_maze, path->points[i]);
-        update_maze_display();
+        if (update_maze_display())
+            return 1;
     }
+
+    return 0;
 }
 
-void willson(MAZE maze)
+int willson(MAZE maze)
 {
     SET* not_in_maze = construct_set();
     for (int y = 0; y < maze.height; y++)
@@ -588,23 +668,40 @@ void willson(MAZE maze)
     {
         POINT init = set_pop_random(not_in_maze);
         maze_set_pos(maze, init.x, init.y);
-        update_maze_display();
+        if (update_maze_display())
+        {
+            deconstruct_set(not_in_maze);
+            return 1;
+        }
     }
     while (!(set_is_empty(not_in_maze)))
     {
         POINT start = set_peak_random(not_in_maze);
         WILLSON_PATH* path = willson_get_willson_path(maze, not_in_maze, start);
-        willson_follow_willson_path(maze, not_in_maze, path);
+        if (path == NULL)
+        {
+            deconstruct_set(not_in_maze);
+            return 1;
+        }
+        if (willson_follow_willson_path(maze, not_in_maze, path))
+        {
+            deconstruct_willson_path(path);
+            deconstruct_set(not_in_maze);
+            return 1;
+        }
         deconstruct_willson_path(path);
     }
     deconstruct_set(not_in_maze);
+
+    return 0;
 }
 
-static void hunt_and_kill_walk(MAZE maze, int x, int y)
+static int hunt_and_kill_walk(MAZE maze, int x, int y)
 {
     maze_set_pos(maze, x, y);
     maze_set_visited(maze, x, y);
-    update_maze_display();
+    if (update_maze_display())
+        return 1;
     while (1)
     {
         enum Direction directions[4] = {up, right, down, left};
@@ -649,13 +746,16 @@ static void hunt_and_kill_walk(MAZE maze, int x, int y)
                 y = new_y;
                 maze_set_pos(maze, x, y);
                 maze_set_visited(maze, x, y);
-                update_maze_display();
+                if (update_maze_display())
+                    return 1;
                 break;
             }
         }
         if (dead_end)
             break;
     }
+
+    return 0;
 }
 
 static unsigned char hunt_and_kill_unvisited_with_visited_neighbors(MAZE maze, int x, int y)
@@ -701,7 +801,6 @@ static unsigned char hunt_and_kill_unvisited_with_visited_neighbors(MAZE maze, i
             maze_set_pos(maze, x, y);
             maze_set_visited(maze, x, y);
             maze_carve_passage(maze, directions[i]);
-            update_maze_display();
             return 1;
         }
     }
@@ -717,9 +816,20 @@ static POINT hunt_and_kill_hunt(MAZE maze, int start_x, int start_y)
     for (int x = start_x; x < maze.width; x++)
     {
         maze_set_pos(maze, x, start_y);
-        update_maze_display();
+        if (update_maze_display())
+        {
+            p.x = -2;
+            p.y = -2;
+            return p;
+        }
         if (hunt_and_kill_unvisited_with_visited_neighbors(maze, x, start_y))
         {
+            if (update_maze_display())
+            {
+                p.x = -2;
+                p.y = -2;
+                return p;
+            }
             p.x = x;
             p.y = start_y;
             return p;
@@ -730,9 +840,20 @@ static POINT hunt_and_kill_hunt(MAZE maze, int start_x, int start_y)
         for (int x = 0; x < maze.width; x++)
         {
             maze_set_pos(maze, x, y);
-            update_maze_display();
+            if (update_maze_display())
+            {
+                p.x = -2;
+                p.y = -2;
+                return p;
+            }
             if (hunt_and_kill_unvisited_with_visited_neighbors(maze, x, y))
             {
+                if (update_maze_display())
+                {
+                    p.x = -2;
+                    p.y = -2;
+                    return p;
+                }
                 p.x = x;
                 p.y = y;
                 return p;
@@ -742,19 +863,24 @@ static POINT hunt_and_kill_hunt(MAZE maze, int start_x, int start_y)
     return p;
 }
 
-void hunt_and_kill(MAZE maze)
+int hunt_and_kill(MAZE maze)
 {
     int x = 0;
     int y = 0;
     while (1)
     {
-        hunt_and_kill_walk(maze, x, y);
+        if (hunt_and_kill_walk(maze, x, y))
+            return 1;
         POINT p = hunt_and_kill_hunt(maze, x + 1, y);
+        if (p.x == -2 || p.y == -2)
+            return 1;
         if (p.x == -1 || p.y == -1)
-            return;
+            return 0;
         x = p.x;
         y = p.y;
     }
+
+    return 0;
 }
 
 static unsigned char growing_tree_step(MAZE maze, DEQUE* frontier, POINT p)
@@ -801,16 +927,14 @@ static unsigned char growing_tree_step(MAZE maze, DEQUE* frontier, POINT p)
             maze_set_visited(maze, new_x, new_y);
             POINT p_add = {new_x, new_y};
             deque_push_back(frontier, p_add);
-            update_maze_display();
             return 0;
         }
     }
     maze_clear_special_value(maze, p.x, p.y);
-    update_maze_display();
     return 1;
 }
 
-void growing_tree(MAZE maze, int weights[5])
+int growing_tree(MAZE maze, int weights[5])
 {
     DEQUE* frontier = construct_deque();
     POINT p = {0, 0};
@@ -846,40 +970,52 @@ void growing_tree(MAZE maze, int weights[5])
             default:
                 break;
         }
+        if (update_maze_display())
+        {
+            deconstruct_deque(frontier);
+            return 1;
+        }
     }
     deconstruct_deque(frontier);
+    return 0;
 }
 
-void binary_tree(MAZE maze)
+int binary_tree(MAZE maze)
 {
     enum Direction dirs[2] = {up, left};
     for (int x = 1; x < maze.width; x++)
     {
         maze_set_pos(maze, x, 0);
         maze_carve_passage(maze, left);
-        update_maze_display();
+        if (update_maze_display())
+            return 1;
     }
     for (int y = 1; y < maze.height; y++)
     {
         maze_set_pos(maze, 0, y);
         maze_carve_passage(maze, up);
-        update_maze_display();
+        if (update_maze_display())
+            return 1;
         for (int x = 1; x < maze.width; x++)
         {
             maze_set_pos(maze, x, y);
             maze_carve_passage(maze, dirs[between(0, 2)]);
-            update_maze_display();
+            if (update_maze_display())
+                return 1;
         }
     }
+    
+    return 0;
 }
 
-void sidewinder(MAZE maze)
+int sidewinder(MAZE maze)
 {
     for (int x = 0; x < maze.width - 1; x++)
     {
         maze_set_pos(maze, x, 0);
         maze_carve_passage(maze, right);
-        update_maze_display();
+        if (update_maze_display())
+            return 1;
     }
     for (int y = 1; y < maze.height; y++)
     {
@@ -897,10 +1033,14 @@ void sidewinder(MAZE maze)
                 maze_carve_passage(maze, up);
                 run_start = x + 1;
             }
-            update_maze_display();
+            if (update_maze_display())
+                return 1;
         }
         maze_set_pos(maze, between(run_start, maze.width), y);
         maze_carve_passage(maze, up);
-        update_maze_display();
+        if (update_maze_display())
+            return 1;
     }
+
+    return 0;
 }

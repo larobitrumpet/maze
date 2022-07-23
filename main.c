@@ -223,7 +223,7 @@ void draw()
     disp_post_draw();
 }
 
-void update_maze_display()
+int update_maze_display()
 {
     while (!(al_is_event_queue_empty(queue)))
     {
@@ -233,9 +233,7 @@ void update_maze_display()
         switch (event.type)
         {
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                deinit();
-                exit(0);
-                break;
+                return 1;
             case ALLEGRO_EVENT_DISPLAY_RESIZE:
                 al_acknowledge_resize(disp);
                 break;
@@ -251,6 +249,8 @@ void update_maze_display()
     }
 
     disp_post_draw();
+
+    return 0;
 }
 
 int main()
@@ -305,50 +305,56 @@ int main()
     // setup_scene();
     maze = construct_maze(maze_w, maze_h, wall_adder);
     draw_maze();
+    int quit = 0;
     switch (algorithm)
     {
         case 0:
-            recursive_backtracking(maze);
+            quit = recursive_backtracking(maze);
             break;
         case 1:
-            eller(maze);
+            quit = eller(maze);
             break;
         case 2:
-            kruskal(maze);
+            quit = kruskal(maze);
             break;
         case 3:
-            prim(maze);
+            quit = prim(maze);
             break;
         case 4:
-            recursive_division(maze);
+            quit = recursive_division(maze);
             break;
         case 5:
-            aldous_broder(maze);
+            quit = aldous_broder(maze);
             break;
         case 6:
-            willson(maze);
+            quit = willson(maze);
             break;
         case 7:
-            hunt_and_kill(maze);
+            quit = hunt_and_kill(maze);
             break;
         case 8:
-            growing_tree(maze, weights);
+            quit = growing_tree(maze, weights);
             break;
         case 9:
-            binary_tree(maze);
+            quit = binary_tree(maze);
             break;
         case 10:
-            sidewinder(maze);
+            quit = sidewinder(maze);
             break;
         default:
             break;
     }
 
+    if (quit)
+    {
+        deinit();
+        return 0;
+    }
+
     maze_set_pos(maze, -1, -1);
-    update_maze_display();
+    bool done = update_maze_display();
     al_save_bitmap("maze.png", buffer);
 
-    bool done = false;
     al_start_timer(timer);
     while(true)
     {
