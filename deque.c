@@ -1,8 +1,7 @@
 #include "deque.h"
 
-static inline int mod(int a, int b)
-{
-    return a < 0 ? a % b + b : a % b;
+static inline int mod(int a, int b) {
+    return ((a % b) + b) % b;
 }
 
 DEQUE* construct_deque()
