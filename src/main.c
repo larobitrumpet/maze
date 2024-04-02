@@ -153,13 +153,13 @@ void sprites_init(int tile_type)
     switch (tile_type)
     {
         case 1:
-            sprites._sheet = al_load_bitmap("maze_tiles_1.png");
+            sprites._sheet = al_load_bitmap("assets/maze_tiles_1.png");
             break;
         case 2:
-            sprites._sheet = al_load_bitmap("maze_tiles_2.png");
+            sprites._sheet = al_load_bitmap("assets/maze_tiles_2.png");
             break;
         case 3:
-            sprites._sheet = al_load_bitmap("maze_tiles_3.png");
+            sprites._sheet = al_load_bitmap("assets/maze_tiles_3.png");
             break;
         default:
             break;
