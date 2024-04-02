@@ -1,4 +1,1 @@
-main
-main_debug
-*.o
-maze.png
+build/
