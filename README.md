@@ -6,20 +6,27 @@ I have implemented various maze generation algorithms in C using the Allegro gam
 
 This application requires Allegro 5. Instructions for installing Allegro 5 can be found [here](https://github.com/liballeg/allegro_wiki/wiki/Quickstart).
 
-This application also requires `gcc` or some other way of compiling C (the makefile uses `gcc`).
-
-`make` is recommended.
+This application uses the `cmake` build system.
 
 ## Build
 
-To build on Linux, run `make`.
+Create a build directory and enter that directory
+```
+mkdir build
+cd build
+```
 
-To build on other platforms, [this](https://github.com/liballeg/allegro_wiki/wiki/Quickstart) will help you figure out how to build Allegro applicaions. This application uses the image addon.
+Run `cmake` and point it to the source directory
+```
+cmake ..
+```
 
+Run whatever build system is applicable to you (for example, for Linux this would likely be `make`).
+```
+make
+```
 
 ## Usage
-
-If you have `make`, you can run `make run`. You can also run the binary executable `./main` or `./main.exe` on Windows.
 
 You will be asked the dimensions of the maze and what algorithm to use. To choose an algorithm, simply enter the number corresponding to that algorithm.
 If you choose the Growing Tree algorithm, you will also be asked to provide weights for the different methods of choosing a cell. For example, if you want the algorithm to choose the newest cell added 50% of the time and choose a random cell 50% of the time, then you would give newest and random weights of 1, and all other methods weights of 0:
@@ -46,6 +53,8 @@ If you only want to choose the newest cell added, then give newest a weight of 1
 Choosing only the newest is equivelent to the Recursive Backtracking algorithm and choosing only randomly is equivelent to Prim's algorithm.
 
 You will then be asked to select a tile set. This will determine how the maze looks.
+
+The completed maze will be saved to the file `maze.png`.
 
 ## License
 
